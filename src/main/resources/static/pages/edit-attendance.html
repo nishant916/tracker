@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+  <head>
+    <script src="../assets/js/color-modes.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.122.0">
+    <title>Classroom Management - Edit Attendance</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cheatsheet/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+        visibility: visible;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary rounded" aria-label="Navigation bar">
+      <div class="container-fluid">
+        <a id="homePage" class="navbar-brand" href="#">Classroom Management</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#classroomNavbar" aria-controls="classroomNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation bar Options: Attendance, Performance and Course Settings -->
+        <div class="collapse navbar-collapse" id="classroomNavbar">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            
+            <li class="nav-item dropdown">
+              <span class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" aria-expanded="false">Attendance</span>
+              <ul class="dropdown-menu">
+                <li><a id="takeAttendancePage" class="dropdown-item" href="#">Take Attendance</a></li>
+                <li><a id="viewAttendancePage" class="dropdown-item" href="#">View Attendance</a></li>
+              </ul>
+            </li>
+            
+            <li class="nav-item dropdown">
+              <span class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Performance</span>
+              <ul class="dropdown-menu">
+                <li><a id="editGradesPage" class="dropdown-item" href="#">Edit Grades</a></li>
+                <li><a id="viewGradesPage" class="dropdown-item" href="#">View Grades</a></li>
+              </ul>
+            </li>
+
+            <!-- Course Settings -->
+            <li class="nav-item">
+              <a id="courseSettingsPage" class="nav-link" href="#">Course Settings</a>
+            </li>
+          </ul >
+
+          <!-- Username Dropdown -->
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <span id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</span>
+              <ul class="dropdown-menu">
+                <li><a id="logoutLink" class="dropdown-item" href="#">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+
+
+        </div>
+      </div>
+    </nav>
+
+
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
+      <div class="w-100" style="max-width: 900px; padding: 20px;">
+        <div class="mb-3">
+          <h1>Edit Attendance</h1>
+        </div>
+
+        
+      </div>
+    </div>
+
+    <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="cheatsheet.js"></script>
+    <script src="common.js"></script>
+  </body>
+</html>
