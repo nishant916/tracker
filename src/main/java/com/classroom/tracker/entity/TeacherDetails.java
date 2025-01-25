@@ -3,7 +3,7 @@ package com.classroom.tracker.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="teacher_details")
+@Table(name="teacher_details") //table name
 public class TeacherDetails {
 
     @Id
