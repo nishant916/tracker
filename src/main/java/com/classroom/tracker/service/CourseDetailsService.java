@@ -28,6 +28,12 @@ public class CourseDetailsService {
         return courseDetailsRepository.findByTeacherIdAndCourseId(teacherId, courseId);
     }
 
+    // Fetch active courses for a specific teacher
+    public List<CourseDetails> getCoursesByTeacherIdAndIsCourseActive(Long teacherId, Boolean isCourseActive) {
+        return courseDetailsRepository.findByTeacherIdAndIsCourseActive(teacherId, isCourseActive);
+    }
+
+
 /*  public List<Map<String, Object>> getAllCoursesByTeacherId(Long teacherId) {
         List<CourseDetails> byTeacherId = courseDetailsRepository.findByTeacherId(teacherId);
 
