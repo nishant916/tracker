@@ -25,10 +25,18 @@ public class CourseDetailsController {
         return ResponseEntity.ok(courses);
     }
 
+    // Fetch course details using courseId for a specific teacher
     @GetMapping("/{teacherId}/{courseId}")
     public ResponseEntity<CourseDetails> getCourseDetails(@PathVariable Long teacherId, @PathVariable Long courseId) {
         CourseDetails courseDetails = courseDetailsService.getCourseDetailsByTeacherIdAndCourseId(teacherId, courseId);
         return ResponseEntity.ok(courseDetails);
+    }
+
+    // Fetch active courses for a specific teacher
+    @GetMapping("/{teacherId}/active-courses")
+    public ResponseEntity<List<CourseDetails>> getActiveCourses(@PathVariable Long teacherId) {
+        List<CourseDetails> courses = courseDetailsService.getCoursesByTeacherIdAndIsCourseActive(teacherId, true);
+        return ResponseEntity.ok(courses);
     }
 
     // Update settings of a specific course (attendance, exams, etc.)
