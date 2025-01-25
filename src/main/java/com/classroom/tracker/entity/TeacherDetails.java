@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name="teacher_details") //table name
 public class TeacherDetails {
-
+    //adding columns
     @Id
     @Column(name = "teacher_id")
     private Long teacherId;
