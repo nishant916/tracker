@@ -39,6 +39,13 @@ public class CourseDetailsController {
         return ResponseEntity.ok(courses);
     }
 
+    // Fetch total classes for a specific course
+    @GetMapping("/{courseId}/total-classes")
+    public ResponseEntity<Integer> getTotalClasses(@PathVariable Long courseId) {
+        int totalClasses = courseDetailsService.getTotalClassesByCourseId(courseId);
+        return ResponseEntity.ok(totalClasses);
+    }
+
     // Update settings of a specific course (attendance, exams, etc.)
     @PutMapping("/{teacherId}/{courseId}/update")
     public ResponseEntity<CourseDetails> updateCourseSettings(

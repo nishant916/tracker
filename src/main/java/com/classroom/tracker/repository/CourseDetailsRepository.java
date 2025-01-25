@@ -16,4 +16,5 @@ public interface CourseDetailsRepository extends JpaRepository<CourseDetails, Lo
     // Find courses by teacher ID and course ID
     CourseDetails findByTeacherIdAndCourseId(Long teacherId, Long courseId);
 
+
 }

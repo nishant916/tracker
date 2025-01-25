@@ -14,10 +14,34 @@
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-      .nav-item.dropdown:hover .dropdown-menu {
-        display: block;
-        visibility: visible;
+
+      .select-wrapper {
+      position: relative;
       }
+
+      .form-select {
+      width: 100%;
+      margin-bottom: 10px;
+      }
+
+      .select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1050;
+      }
+
+      .select-wrapper.open .select-dropdown {
+      display: block;
+      }
+
+      .select-wrapper .select-dropdown {
+      display: none;
+      }
+
     </style>
   </head>
 
@@ -87,12 +111,22 @@
             <!-- Dynamic options will be added here by JavaScript -->
           </select>
         </div>
-        
+
+        <!-- Drop-down for number of classes -->
+        <div class="mb-3">
+          <label for="classNumberList" class="form-label">Class Number</label>
+          <select class="form-select" id="classNumberList" disabled>
+            <option selected disabled>select class number</option>
+            <!-- Dynamic options will be added here by JavaScript -->
+          </select>
+        </div>
+
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
     <script src="common.js"></script>
+    <script src="take-attendance.js"></script>
   </body>
 </html>

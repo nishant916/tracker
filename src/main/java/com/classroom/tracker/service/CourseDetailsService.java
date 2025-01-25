@@ -33,6 +33,10 @@ public class CourseDetailsService {
         return courseDetailsRepository.findByTeacherIdAndIsCourseActive(teacherId, isCourseActive);
     }
 
+    // Fetch total class for a specific course
+    public int getTotalClassesByCourseId(Long courseId) {
+        return courseDetailsRepository.findById(courseId).get().getTotalClasses();
+    }
 
 /*  public List<Map<String, Object>> getAllCoursesByTeacherId(Long teacherId) {
         List<CourseDetails> byTeacherId = courseDetailsRepository.findByTeacherId(teacherId);
