@@ -45,8 +45,7 @@ public class CourseDetailsController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
+//TODO: remove this commented code
 
 /*
 
