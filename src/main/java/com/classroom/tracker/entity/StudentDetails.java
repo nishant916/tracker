@@ -3,12 +3,15 @@ package com.classroom.tracker.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="teacher_details")
-public class TeacherDetails {
+@Table(name = "student_details")
+public class StudentDetails {
 
     @Id
-    @Column(name = "teacher_id")
-    private Long teacherId;
+    @Column(name = "id")
+    private Long id;            // primary key
+
+    @Column(name = "student_id")
+    private Long studentId;     // unique student identifier
 
     @Column(name = "first_name")
     private String firstName;
@@ -19,18 +22,23 @@ public class TeacherDetails {
     @Column(name = "email_address")
     private String emailAddress;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "course_Id")
+    private Long courseId;      // Foreign key to link to course_details
 
-    @Column(name = "password")
-    private String password;
-
-    public Long getTeacherId() {
-        return teacherId;
+    public Long getId() {
+        return id;
     }
 
-    public void setTeacherId(Long teacherId) {
-        this.teacherId = teacherId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
     }
 
     public String getFirstName() {
@@ -57,19 +65,12 @@ public class TeacherDetails {
         this.emailAddress = emailAddress;
     }
 
-    public String getUsername() {
-        return username;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

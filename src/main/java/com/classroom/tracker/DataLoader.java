@@ -2,8 +2,12 @@ package com.classroom.tracker;
 
 import com.classroom.tracker.entity.CourseDetails;
 import com.classroom.tracker.entity.TeacherDetails;
+import com.classroom.tracker.entity.StudentDetails;
+import com.classroom.tracker.entity.StudentAttendance;
 import com.classroom.tracker.repository.CourseDetailsRepository;
 import com.classroom.tracker.repository.TeacherDetailsRepository;
+import com.classroom.tracker.repository.StudentDetailsRepository;
+import com.classroom.tracker.repository.StudentAttendanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,6 +26,12 @@ public class DataLoader {
     @Autowired
     private TeacherDetailsRepository teacherDetailsRepository;
 
+    @Autowired
+    private StudentDetailsRepository studentDetailsRepository;
+
+    @Autowired
+    private StudentAttendanceRepository studentAttendanceRepository;
+
     // Path to the CSV file (can be in resources folder or any desired location)
     @Value("${csv.course-details}")
     private String courseDetailsCsv;
@@ -29,11 +39,19 @@ public class DataLoader {
     @Value("${csv.teacher-details}")
     private String teacherDetailsCsv;
 
+    @Value("${csv.student-details}")
+    private String studentDetailsCsv;
+
+    @Value("${csv.student-attendance}")
+    private String studentAttendanceCsv;
+
 
     public void loadData() {
         try {
             loadCourseDetails(courseDetailsCsv);
-            loadTeacherDetails(teacherDetailsCsv);;
+            loadTeacherDetails(teacherDetailsCsv);
+            loadStudentDetails(studentDetailsCsv);
+            loadStudentAttendance(studentAttendanceCsv);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,6 +145,54 @@ public class DataLoader {
 
                 // Save to repository
                 teacherDetailsRepository.save(teacherDetails);
+            }
+        }
+    }
+
+    private void loadStudentDetails(String csvFilePath) throws IOException{
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(csvFilePath))) {
+            String line = br.readLine(); // Skip header row
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+
+                StudentDetails studentDetails = new StudentDetails();
+                studentDetails.setId(parseLong(values[0]));
+                studentDetails.setStudentId(parseLong(values[1]));
+                studentDetails.setFirstName(values[2]);
+                studentDetails.setLastName(values[3]);
+                studentDetails.setEmailAddress(values[4]);
+                studentDetails.setCourseId(parseLong(values[5]));
+
+                studentDetailsRepository.save(studentDetails);
+            }
+        }
+    }
+
+    private void loadStudentAttendance(String csvFilePath) throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(csvFilePath))) {
+            String line = br.readLine(); // Skip header row
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+
+                StudentAttendance studentAttendance = new StudentAttendance();
+                studentAttendance.setId(parseLong(values[0]));
+                studentAttendance.setStudentId(parseLong(values[1]));
+                studentAttendance.setCourseId(parseLong(values[2]));
+
+                studentAttendance.setClass1(values[3]);
+                studentAttendance.setClass2(values[4]);
+                studentAttendance.setClass3(values[5]);
+                studentAttendance.setClass4(values[6]);
+                studentAttendance.setClass5(values[7]);
+                studentAttendance.setClass6(values[8]);
+                studentAttendance.setClass7(values[9]);
+                studentAttendance.setClass8(values[10]);
+                studentAttendance.setClass9(values[11]);
+                studentAttendance.setClass10(values[12]);
+
+                studentAttendanceRepository.save(studentAttendance);
             }
         }
     }
