@@ -11,7 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
       fetchClassNumbers(selectedCourseId);
     }
   });
+
+// added for fetching students of a particular course
+  classDropdown.addEventListener('change', () => {
+    const selectedCourseId = document.getElementById('activeCoursesList').value;
+    const selectedClassNumber = classDropdown.value;
+
+    if (selectedCourseId && selectedClassNumber) {
+      fetchStudentsForCourse(selectedCourseId);
+    }
+  });
+
 });
+
+
 
 // Override the updateActiveCourseList function to add filtering logic
 function updateActiveCourseList(courses) {
@@ -81,6 +94,46 @@ function populateClassList(totalClasses) {
     // In case the totalClasses is 0 or undefined
     console.error('Total classes value is invalid');
     classDropdown.disabled = true;
+  }
+}
+
+// Function to fetch students for the selected course
+function fetchStudentsForCourse(courseId) {
+  const url = `/api/attendance/${courseId}/students`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      console.log('Fetched students:', data);
+      populateStudentTable(data);
+    })
+    .catch(error => console.error('Error fetching students:', error));
+}
+
+
+// Function to populate the student table
+function populateStudentTable(students) {
+  const tableContainer = document.getElementById('studentsTableContainer');
+  const tableBody = document.getElementById('studentsTableBody');
+
+  // Clear previous table rows
+  tableBody.innerHTML = '';
+
+  if (students && students.length > 0) {
+    students.forEach(student => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${student.studentId}</td>
+        <td>${student.firstName}</td>
+        <td>${student.lastName}</td>
+      `;
+      tableBody.appendChild(row);
+    });
+
+    tableContainer.style.display = 'block'; // Make the table visible
+  } else {
+    console.warn('No students found for the selected course.');
+    tableContainer.style.display = 'none'; // Hide the table if no students
   }
 }
 
