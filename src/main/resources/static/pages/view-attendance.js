@@ -39,13 +39,13 @@ function fetchStudentsForCourse(courseId) {
         .then(response => response.json())
         .then(studentDetails => {
         console.log('Fetched students details:', studentDetails);
-        populateStudentTable(studentDetails);
+        populateStudentTable(studentDetails, courseId);
     })
         .catch(error => console.error('Error fetching students:', error));
 }
 
-// Function to populate the student table
-function populateStudentTable(studentDetails) {
+// Function to populate the student table with studentId, firstName & lastName
+function populateStudentTable(studentDetails, courseId) {
     const tableContainer = document.getElementById('studentsTableContainer');
     const tableBody = document.getElementById('studentsTableBody');
 
@@ -64,6 +64,7 @@ function populateStudentTable(studentDetails) {
         });
 
         tableContainer.style.display = 'block'; // Make the table visible
+        fetchClassNumbers(courseId);
     } else {
         console.warn('No students found for the selected course.');
         tableContainer.style.display = 'none'; // Hide the table if no students
@@ -90,24 +91,32 @@ function fetchStudentsAttendance(courseId, totalClasses) {
         .then(response => response.json())
         .then(studentAttendance => {
         console.log('Fetched students attendance:', studentAttendance);
-        addTableHeaders(totalClasses, studentAttendance);
+        addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance);
     })
         .catch(error => console.error('Error fetching students:', error));
 }
 
-//add headers class1, class2, ...
-function addTableHeaders(totalClasses, studentAttendance) {
-    const tableContainer = document.getElementById('studentsTableContainer');
-    const table = tableContainer.querySelector('view-attendance-table');
+/*
+// Add the class headers (Class 1, Class 2, Class 3 ...) & then populate the attendance information
+function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
+    const table = document.getElementById('view-attendance-table');
     const tableHead = table.querySelector('thead');
-    const tableBody = table.querySelector('tbody');
-    const headerRow = document.createElement('tr');
+    const tableBody = document.getElementById('studentsTableBody');
 
-    // Clear previous table rows
-    tableBody.innerHTML = '';
-    tableHead.innerHTML = '';
+    // Check if tableHead and tableBody exist
+    if (!tableHead || !tableBody) {
+        console.error('Table head or body not found in the DOM.');
+        return;
+    }
 
+    // Clear previous dynamic columns (keep static columns intact)
+    const staticColumnsCount = 3; // Static columns: Student ID, First Name, Last Name
+    const headerRow = tableHead.querySelector('tr');
+    while (headerRow.children.length > staticColumnsCount) {
+        headerRow.removeChild(headerRow.lastChild);
+    }
 
+    // Add dynamic headers for each class
     for (let i = 1; i <= totalClasses; i++) {
         const classHeader = document.createElement('th');
         classHeader.scope = 'col';
@@ -115,36 +124,90 @@ function addTableHeaders(totalClasses, studentAttendance) {
         headerRow.appendChild(classHeader);
     }
 
-    tableHead.appendChild(headerRow);
+    // Populate attendance data into rows
+    studentAttendance.forEach(student => {
+        const row = Array.from(tableBody.children).find(
+            (tr) => tr.children[0].textContent === student.studentId.toString()
+        );
 
-//    if (studentAttendance && studentAttendance.length > 0) {
-//        studentAttendance.forEach(student => {
+        if (row) {
+            // Add attendance cells for each class
+            for (let i = 1; i <= totalClasses; i++) {
+                const attendanceCell = document.createElement('td');
+                const attendanceKey = `class${i}`; // Assuming class1, class2, ...
+                attendanceCell.textContent = student[attendanceKey] || 'N/A'; // Default to 'N/A' if data is missing
+                row.appendChild(attendanceCell);
+            }
+        } else {
+            console.warn(`Row not found for student ID: ${student.studentId}`);
+        }
+    });
+} */
 
-            // Create cells for each class attendance
-//            for (let i = 1; i <= totalClasses; i++) {
-//                const attendanceCell = document.createElement('td');
-//                attendanceCell.textContent = student.attendance && student.attendance[i - 1] ? 'Present' : 'Absent';
-//                row.appendChild(attendanceCell);
-//            }
+// Add the class headers (Class 1, Class 2, Class 3 ...) & then populate the attendance information
+function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
+    const table = document.getElementById('view-attendance-table');
+    const tableHead = table.querySelector('thead');
+    const tableBody = document.getElementById('studentsTableBody');
 
-            // Append the row to the table body
-//            tableBody.appendChild(row);
-//        });
+    // Check if tableHead and tableBody exist
+    if (!tableHead || !tableBody) {
+        console.error('Table head or body not found in the DOM.');
+        return;
+    }
 
-        // Make the table visible if it has data
-//        document.getElementById('studentsTableContainer').style.display = 'block';
-//    } else {
-//        console.warn('No students found for the selected course.');
-//        document.getElementById('studentsTableContainer').style.display = 'none'; // Hide the table if no students
-//    }
+    // Clear previous dynamic columns (keep static columns intact)
+    const staticColumnsCount = 3; // Static columns: Student ID, First Name, Last Name
+    const headerRow = tableHead.querySelector('tr');
+    while (headerRow.children.length > staticColumnsCount) {
+        headerRow.removeChild(headerRow.lastChild);
+    }
+
+    // Add dynamic headers for each class
+    for (let i = 1; i <= totalClasses; i++) {
+        const classHeader = document.createElement('th');
+        classHeader.scope = 'col';
+        classHeader.textContent = `Class ${i}`;
+        headerRow.appendChild(classHeader);
+    }
+
+    // Populate attendance data into rows
+    studentAttendance.forEach(student => {
+        const row = Array.from(tableBody.children).find(
+            (tr) => tr.children[0].textContent === student.studentId.toString()
+        );
+
+        if (row) {
+            // Add attendance cells for each class
+            for (let i = 1; i <= totalClasses; i++) {
+                const attendanceCell = document.createElement('td');
+                const attendanceKey = `class${i}`; // Assuming class1, class2, ...
+                const attendanceValue = student[attendanceKey] || 'N/A'; // Default to 'N/A' if data is missing
+
+                // Set text content for the attendance cell
+                attendanceCell.textContent = attendanceValue;
+
+                // Apply background color based on attendance value
+                switch (attendanceValue) {
+                    case 'absent':
+                        attendanceCell.style.backgroundColor = '#ffcccc'; // Light red for absent
+                        break;
+                    case 'late':
+                        attendanceCell.style.backgroundColor = '#ffffcc'; // Light yellow for late
+                        break;
+                    case 'present':
+                        attendanceCell.style.backgroundColor = '#ccffcc'; // Light green for present
+                        break;
+                    default:
+                        attendanceCell.style.backgroundColor = '#f8f9fa'; // Default background for 'N/A'
+                        break;
+                }
+
+                row.appendChild(attendanceCell);
+            }
+        } else {
+            console.warn(`Row not found for student ID: ${student.studentId}`);
+        }
+    });
 }
-
-
-
-
-
-
-
-
-
 
