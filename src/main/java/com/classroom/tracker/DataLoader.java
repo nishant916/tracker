@@ -4,10 +4,12 @@ import com.classroom.tracker.entity.CourseDetails;
 import com.classroom.tracker.entity.TeacherDetails;
 import com.classroom.tracker.entity.StudentDetails;
 import com.classroom.tracker.entity.StudentAttendance;
+import com.classroom.tracker.entity.StudentGrades;
 import com.classroom.tracker.repository.CourseDetailsRepository;
 import com.classroom.tracker.repository.TeacherDetailsRepository;
 import com.classroom.tracker.repository.StudentDetailsRepository;
 import com.classroom.tracker.repository.StudentAttendanceRepository;
+import com.classroom.tracker.repository.StudentGradesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,9 @@ public class DataLoader {
     @Autowired
     private StudentAttendanceRepository studentAttendanceRepository;
 
+    @Autowired
+    private StudentGradesRepository studentGradesRepository;
+
     // Path to the CSV file (can be in resources folder or any desired location)
     @Value("${csv.course-details}")
     private String courseDetailsCsv;
@@ -45,6 +50,9 @@ public class DataLoader {
     @Value("${csv.student-attendance}")
     private String studentAttendanceCsv;
 
+    @Value("${csv.student-grades}")
+    private String studentGradesCsv;
+
 
     public void loadData() {
         try {
@@ -52,6 +60,7 @@ public class DataLoader {
             loadTeacherDetails(teacherDetailsCsv);
             loadStudentDetails(studentDetailsCsv);
             loadStudentAttendance(studentAttendanceCsv);
+            loadStudentGrades(studentGradesCsv);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -193,6 +202,35 @@ public class DataLoader {
                 studentAttendance.setClass10(values[12]);
 
                 studentAttendanceRepository.save(studentAttendance);
+            }
+        }
+    }
+
+    private void loadStudentGrades(String csvFilePath) throws IOException {
+        try (BufferedReader br = Files.newBufferedReader(Paths.get(csvFilePath))) {
+            String line = br.readLine(); // Skip header row
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+
+                StudentGrades studentGrades = new StudentGrades();
+                studentGrades.setId(parseLong(values[0]));
+                studentGrades.setStudentId(parseLong(values[1]));
+                studentGrades.setCourseId(parseLong(values[2]));
+
+                studentGrades.setExam1Grades(parseInteger(values[3]));
+                studentGrades.setExam2Grades(parseInteger(values[4]));
+                studentGrades.setExam3Grades(parseInteger(values[5]));
+                studentGrades.setExam4Grades(parseInteger(values[6]));
+                studentGrades.setExam5Grades(parseInteger(values[7]));
+                studentGrades.setExam6Grades(parseInteger(values[8]));
+                studentGrades.setExam7Grades(parseInteger(values[9]));
+                studentGrades.setExam8Grades(parseInteger(values[10]));
+                studentGrades.setExam9Grades(parseInteger(values[11]));
+                studentGrades.setExam10Grades(parseInteger(values[12]));
+                studentGrades.setTotalGrades(parseInteger(values[13]));
+
+                studentGradesRepository.save(studentGrades);
             }
         }
     }
