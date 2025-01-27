@@ -78,7 +78,6 @@
         <div class="mb-3">
           <h1>View Attendance</h1>
         </div>
-
         <!-- Drop-down for active courses selection -->
         <div class="mb-3">
           <label for="activeCoursesList" class="form-label">Course Name</label>
@@ -87,12 +86,31 @@
             <!-- Dynamic options will be added here by JavaScript -->
           </select>
         </div>
-        
+        <p><a target="_blank" href="">Click here for Attendance Statistics</a></p>
+        <!-- add attendance overview -->
+
+        <div id="studentsTableContainer" class="table-responsive" >
+          <table id="view-attendance-table" class="table">
+            <thead>
+            <tr>
+              <th scope="col">Student ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+                <!-- Additional columns for classes will be added here dynamically -->
+            </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <!-- Student rows will be added here dynamically -->
+            </tbody>
+          </table>
+
+        </div>
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
     <script src="common.js"></script>
+    <script src="view-attendance.js"></script>
   </body>
 </html>
