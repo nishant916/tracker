@@ -124,16 +124,19 @@
         <!-- Table Container -->
         <div id="studentsTableContainer" style="display: none;" class="mt-4">
           <h4>Student List</h4>
-          <table class="table table-striped table-bordered">
-            <thead class="table-dark">
+          <table id="take-attendance-table" class="table table-striped table-bordered">
+            <thead id="studentsTableHead" class="table-dark">
             <tr>
               <th scope="col">Student ID</th>
               <th scope="col">First Name</th>
               <th scope="col">Last Name</th>
+              <th scope="col">Class</th> <!-- This will be dynamically updated -->
             </tr>
             </thead>
             <tbody id="studentsTableBody"></tbody>
           </table>
+          <!-- Save Button -->
+          <button id="saveButton" type="button" class="btn btn-primary mt-3">Save Changes</button>
         </div>
 
       </div>

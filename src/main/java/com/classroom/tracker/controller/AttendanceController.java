@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+
 
 @RestController
 @RequestMapping("/api/attendance")
@@ -25,4 +25,11 @@ public class AttendanceController {
         List<StudentDetails> students = studentDetailsService.getStudentsByCourseId(courseId);
         return ResponseEntity.ok(students);
     }
+
+
+
+
+
+
+
 }

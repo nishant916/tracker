@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const courseDropdown = document.getElementById('activeCoursesList');
   const classDropdown = document.getElementById('classNumberList');
 
+  // Track selected class number
+    let selectedClassNumber = null;
+
   courseDropdown.addEventListener('change', () => {
     const selectedCourseId = courseDropdown.value;
     if (selectedCourseId) {
@@ -15,12 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
 // added for fetching students of a particular course
   classDropdown.addEventListener('change', () => {
     const selectedCourseId = document.getElementById('activeCoursesList').value;
-    const selectedClassNumber = classDropdown.value;
+    selectedClassNumber = classDropdown.value;
 
     if (selectedCourseId && selectedClassNumber) {
-      fetchStudentsForCourse(selectedCourseId);
+      fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
     }
   });
+
+  const saveButton = document.getElementById('saveButton');
+      if (saveButton) {
+          saveButton.addEventListener('click',  () => saveAttendance(selectedClassNumber));
+      }
 
 });
 
@@ -69,27 +77,7 @@ function populateClassList(totalClasses) {
       option.textContent = `Class ${i}`;
       classDropdown.appendChild(option);
     }
-
     classDropdown.disabled = false;
-    // Update dropdown visibility and scrolling behavior
-    const dropdownHeight = dropdown.scrollHeight;
-    const visibleHeight = window.innerHeight * 0.4;
-    if (dropdownHeight > visibleHeight) {
-        dropdown.style.maxHeight = `${visibleHeight}px`;
-        dropdown.style.overflowY = 'auto';
-    } else {
-        dropdown.style.maxHeight = 'none';
-        dropdown.style.overflowY = 'visible';
-    }
-
-    // Check if the dropdown is overflowing the screen
-    const rect = classDropdown.getBoundingClientRect();
-    if (rect.bottom + dropdownHeight > window.innerHeight) {
-    // Scroll the page down to make room for the dropdown
-        window.scrollBy(0, rect.bottom + dropdownHeight - window.innerHeight);
-    }
-
-    classWrapper.classList.add('open');
     } else {
     // In case the totalClasses is 0 or undefined
     console.error('Total classes value is invalid');
@@ -97,44 +85,152 @@ function populateClassList(totalClasses) {
   }
 }
 
-// Function to fetch students for the selected course
-function fetchStudentsForCourse(courseId) {
-  const url = `/api/attendance/${courseId}/students`;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      console.log('Fetched students:', data);
-      populateStudentTable(data);
+//fetch student details for the selected course
+function fetchStudentsForCourse(courseId, selectedClassNumber) {
+    const url = `/api/attendance/${courseId}/students`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(studentDetails => {
+        console.log('Fetched students details:', studentDetails);
+        fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber);
+
     })
-    .catch(error => console.error('Error fetching students:', error));
+        .catch(error => console.error('Error fetching students:', error));
+}
+
+function fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber) {
+    const url = `/api/students-attendance/${courseId}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(studentAttendance => {
+        console.log('Fetched students attendance:', studentAttendance);
+        // Call populateStudentTable with attendance data
+        populateStudentTable(studentDetails, studentAttendance, selectedClassNumber);
+    })
+        .catch(error => console.error('Error fetching students:', error));
+}
+
+// Function to populate the student table with studentId, firstName & lastName
+function populateStudentTable(studentDetails, studentAttendance, selectedClassNumber) {
+    const tableContainer = document.getElementById('studentsTableContainer');
+    const tableHead = document.getElementById('studentsTableHead');
+    const tableBody = document.getElementById('studentsTableBody');
+
+    // Clear previous table rows and headers
+    tableHead.innerHTML = `
+        <tr>
+            <th>Student ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Class ${selectedClassNumber}</th>
+        </tr>
+    `;
+    tableBody.innerHTML = '';
+
+    if (studentDetails && studentDetails.length > 0) {
+        studentDetails.forEach(student => {
+            const attendanceRecord = studentAttendance.find(att => att.studentId === student.studentId);
+            const attendanceValue = attendanceRecord ? attendanceRecord[`class${selectedClassNumber}`] : "N/A";
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${student.studentId}</td>
+                <td>${student.firstName}</td>
+                <td>${student.lastName}</td>
+                <td>
+                    <select class="attendance-dropdown" data-student-id="${student.studentId}" data-class="${selectedClassNumber}" data-original-value="${attendanceValue}">
+                        ${generateDropdownOptions(attendanceValue)}
+                    </select>
+                </td>
+            `;
+
+
+            tableBody.appendChild(row);
+        });
+
+        tableContainer.style.display = 'block';
+    } else {
+        console.warn('No students found for the selected course.');
+        tableContainer.style.display = 'none';
+    }
+}
+
+function generateDropdownOptions(attendanceValue) {
+    const options = ["Present", "Absent", "Late"];
+
+    if (attendanceValue === "N/A") {
+        return `
+            <option value="" selected>Select</option>
+            ${options.map(opt => `<option value="${opt.toLowerCase()}">${opt}</option>`).join("")}
+        `;
+    } else {
+        return options.map(opt => `
+            <option value="${opt.toLowerCase()}" ${attendanceValue.toLowerCase() === opt.toLowerCase() ? 'selected' : ''}>
+                ${opt}
+            </option>
+        `).join("");
+    }
 }
 
 
-// Function to populate the student table
-function populateStudentTable(students) {
-  const tableContainer = document.getElementById('studentsTableContainer');
-  const tableBody = document.getElementById('studentsTableBody');
 
-  // Clear previous table rows
-  tableBody.innerHTML = '';
 
-  if (students && students.length > 0) {
-    students.forEach(student => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${student.studentId}</td>
-        <td>${student.firstName}</td>
-        <td>${student.lastName}</td>
-      `;
-      tableBody.appendChild(row);
+function saveAttendance(selectedClassNumber) {
+    const courseId = document.getElementById('activeCoursesList').value;
+    const dropdowns = document.querySelectorAll('.attendance-dropdown');
+
+    const attendanceData = [];
+
+    dropdowns.forEach(dropdown => {
+        const studentId = dropdown.getAttribute('data-student-id');
+        const originalValue = dropdown.getAttribute('data-original-value'); // Store original value
+        let newValue = dropdown.value;
+
+        // Only add to attendanceData if there's a change
+        if (newValue !== originalValue) {
+            attendanceData.push({
+                studentId: studentId,
+                courseId: courseId,
+                [`class${selectedClassNumber}`]: newValue || "N/A" // Ensure "N/A" remains if no selection is made
+            });
+        }
     });
 
-    tableContainer.style.display = 'block'; // Make the table visible
-  } else {
-    console.warn('No students found for the selected course.');
-    tableContainer.style.display = 'none'; // Hide the table if no students
-  }
+    // If no changes, return early
+    if (attendanceData.length === 0) {
+        console.log('No changes detected, skipping update.');
+        alert('No attendance changes to save.');
+        return;
+    }
+
+    // Send only the changed records
+    fetch(`/api/students-attendance/${courseId}/class/${selectedClassNumber}/update`, {
+        method: 'PATCH', // Use PATCH instead of PUT
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(attendanceData)
+    })
+    .then(response => response.text())  // Read as text first
+    .then(text => {
+        try {
+            return JSON.parse(text);  // Try parsing JSON
+        } catch {
+            return { message: text };  // If not JSON, wrap it in an object
+        }
+    })
+    .then(result => {
+        console.log('Attendance saved successfully:', result.message);
+        alert(result.message);
+    })
+    .catch(error => {
+        console.error('Error saving attendance:', error);
+        alert('Failed to save attendance. Please try again.');
+    });
 }
+
 
 
