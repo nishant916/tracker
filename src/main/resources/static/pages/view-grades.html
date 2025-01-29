@@ -87,6 +87,24 @@
             <!-- Dynamic options will be added here by JavaScript -->
           </select>
         </div>
+
+        <!-- grades table -->
+        <div id="studentsTableContainer" class="table-responsive" >
+          <table id="view-grades-table" class="table">
+            <thead>
+            <tr>
+              <th scope="col">Student ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <!-- Additional columns for exams will be added here dynamically -->
+            </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+            <!-- Student rows will be added here dynamically -->
+            </tbody>
+          </table>
+
+        </div>
         
       </div>
     </div>
@@ -94,5 +112,6 @@
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
     <script src="common.js"></script>
+  <script src="view-grades.js"></script>
   </body>
 </html>

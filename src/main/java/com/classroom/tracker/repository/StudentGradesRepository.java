@@ -2,9 +2,10 @@ package com.classroom.tracker.repository;
 
 import com.classroom.tracker.entity.StudentGrades;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
 public interface StudentGradesRepository extends JpaRepository<StudentGrades, Long>{
+    //find grades by courseId
+    List<StudentGrades> findByCourseId(Long courseId);
 
 }
