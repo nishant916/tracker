@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
       .nav-item.dropdown:hover .dropdown-menu {
         display: block;
@@ -74,17 +76,68 @@
 
 
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
-      <div class="w-100" style="max-width: 900px; padding: 20px;">
+      <div class="w-100" style="max-width: 1100px; padding: 20px;">
         <div class="mb-3">
-          <h1>Welcome to Classroom Management Portal</h1>
+          <h1 id="welcomeText">Welcome User! Here’s a snapshot of your courses</h1>
         </div>
 
-        
+        <!-- Courses Section -->
+        <div class="container mt-5">
+          <h3 class="text-primary text-center" >Courses Overview</h3>
+          <hr>
+          <div class="row">
+            <!-- Left Side: Tiles for Active and Completed Courses -->
+            <div class="col-md-3">
+              <!-- Tile for #Active Courses -->
+              <div class="card text-center shadow-sm mb-4" style="background-color: #f8f9fa;">
+                <div class="card-body">
+                  <h5 class="card-title text-black"># Active Courses</h5>
+                  <p id="activeCoursesCount" class="card-text display-4 fw-bold" style="color: rgba(54, 162, 235, 0.7);">0</p>
+                </div>
+              </div>
+
+              <!-- Tile for #Completed Courses -->
+              <div class="card text-center shadow-sm" style="background-color: #f8f9fa;">
+                <div class="card-body">
+                  <h5 class="card-title text-black"># Completed Courses</h5>
+                  <p id="completedCoursesCount" class="card-text display-4 fw-bold" style="color: rgba(255, 99, 132, 0.7);">0</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Single Horizontal Bar Chart -->
+            <div class="col-md-9">
+              <canvas id="studentsAcrossCoursesChart" width="800" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="container mt-5">
+          <!-- Attendance Summary Section -->
+          <h3 class="text-primary text-center">Attendance Summary (Active Courses)</h3>
+          <hr>
+          <div class="row" id="attendanceSummaryContainer">
+            <!-- Dynamic content will be inserted here -->
+          </div>
+        </div>
+
+        <div class="container mt-5">
+          <!-- Performance Summary Section -->
+          <h3 class="text-primary text-center">Performance Summary (Active Courses)</h3>
+          <hr>
+          <div class="row" id="performanceSummaryContainer">
+            <!-- Dynamic content will be inserted here -->
+          </div>
+        </div>
+
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
     <script src="common.js"></script>
+    <script src="home-page.js"></script>
   </body>
 </html>

@@ -96,54 +96,6 @@ function fetchStudentsAttendance(courseId, totalClasses) {
         .catch(error => console.error('Error fetching students:', error));
 }
 
-/*
-// Add the class headers (Class 1, Class 2, Class 3 ...) & then populate the attendance information
-function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
-    const table = document.getElementById('view-attendance-table');
-    const tableHead = table.querySelector('thead');
-    const tableBody = document.getElementById('studentsTableBody');
-
-    // Check if tableHead and tableBody exist
-    if (!tableHead || !tableBody) {
-        console.error('Table head or body not found in the DOM.');
-        return;
-    }
-
-    // Clear previous dynamic columns (keep static columns intact)
-    const staticColumnsCount = 3; // Static columns: Student ID, First Name, Last Name
-    const headerRow = tableHead.querySelector('tr');
-    while (headerRow.children.length > staticColumnsCount) {
-        headerRow.removeChild(headerRow.lastChild);
-    }
-
-    // Add dynamic headers for each class
-    for (let i = 1; i <= totalClasses; i++) {
-        const classHeader = document.createElement('th');
-        classHeader.scope = 'col';
-        classHeader.textContent = `Class ${i}`;
-        headerRow.appendChild(classHeader);
-    }
-
-    // Populate attendance data into rows
-    studentAttendance.forEach(student => {
-        const row = Array.from(tableBody.children).find(
-            (tr) => tr.children[0].textContent === student.studentId.toString()
-        );
-
-        if (row) {
-            // Add attendance cells for each class
-            for (let i = 1; i <= totalClasses; i++) {
-                const attendanceCell = document.createElement('td');
-                const attendanceKey = `class${i}`; // Assuming class1, class2, ...
-                attendanceCell.textContent = student[attendanceKey] || 'N/A'; // Default to 'N/A' if data is missing
-                row.appendChild(attendanceCell);
-            }
-        } else {
-            console.warn(`Row not found for student ID: ${student.studentId}`);
-        }
-    });
-} */
-
 // Add the class headers (Class 1, Class 2, Class 3 ...) & then populate the attendance information
 function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
     const table = document.getElementById('view-attendance-table');
