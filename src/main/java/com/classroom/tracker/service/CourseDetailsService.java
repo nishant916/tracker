@@ -35,6 +35,40 @@ public class CourseDetailsService {
         return courseDetailsRepository.findById(courseId).get().getTotalClasses();
     }
 
+
+
+
+    /*  public List<Map<String, Object>> getAllCoursesByTeacherId(Long teacherId) {
+        List<CourseDetails> byTeacherId = courseDetailsRepository.findByTeacherId(teacherId);
+
+        return byTeacherId.stream()
+                .map(course -> {
+                    Map<String, Object> courseMap = new HashMap<>();
+                    courseMap.put("courseId", course.getCourseId());
+                    courseMap.put("course", course.getCourse());
+                    return courseMap;
+                })
+                .collect(Collectors.toList());
+    }
+*/
+
+    public CourseDetails updateCourseSettings(Long teacherId, Long courseId, CourseDetails updatedDetails) {
+        // Verify that the course exists before updating
+        CourseDetails existingCourse = courseDetailsRepository.findByTeacherIdAndCourseId(teacherId, courseId);
+
+        if (existingCourse != null) {
+            // Ensure the courseId and teacherId remain consistent
+            updatedDetails.setCourseId(existingCourse.getCourseId());
+            updatedDetails.setTeacherId(existingCourse.getTeacherId());
+
+            // Save the updated record (overwrites the existing one)
+            return courseDetailsRepository.save(updatedDetails);
+        } else {
+            // Handle the case where the course does not exist
+            return null; // or throw an exception, if preferred
+        }
+    }
+
     //fetch total exams for a specific course
     public int getNumOfExamsByCourseId(Long courseId) {
         return courseDetailsRepository.findById(courseId).get().getNumOfExams();
@@ -87,42 +121,6 @@ public class CourseDetailsService {
 
         return Collections.emptyList(); // Return an empty list if no exams found
     }
-
-
-
-/*  public List<Map<String, Object>> getAllCoursesByTeacherId(Long teacherId) {
-        List<CourseDetails> byTeacherId = courseDetailsRepository.findByTeacherId(teacherId);
-
-        return byTeacherId.stream()
-                .map(course -> {
-                    Map<String, Object> courseMap = new HashMap<>();
-                    courseMap.put("courseId", course.getCourseId());
-                    courseMap.put("course", course.getCourse());
-                    return courseMap;
-                })
-                .collect(Collectors.toList());
-    }
-*/
-
-    public CourseDetails updateCourseSettings(Long teacherId, Long courseId, CourseDetails updatedDetails) {
-        // Verify that the course exists before updating
-        CourseDetails existingCourse = courseDetailsRepository.findByTeacherIdAndCourseId(teacherId, courseId);
-
-        if (existingCourse != null) {
-            // Ensure the courseId and teacherId remain consistent
-            updatedDetails.setCourseId(existingCourse.getCourseId());
-            updatedDetails.setTeacherId(existingCourse.getTeacherId());
-
-            // Save the updated record (overwrites the existing one)
-            return courseDetailsRepository.save(updatedDetails);
-        } else {
-            // Handle the case where the course does not exist
-            return null; // or throw an exception, if preferred
-        }
-    }
-
-
-
 
 
 }

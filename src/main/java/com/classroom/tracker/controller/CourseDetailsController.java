@@ -46,6 +46,21 @@ public class CourseDetailsController {
         return ResponseEntity.ok(totalClasses);
     }
 
+    // Update settings of a specific course (attendance, exams, etc.)
+    @PutMapping("/{teacherId}/{courseId}/update")
+    public ResponseEntity<CourseDetails> updateCourseSettings(
+            @PathVariable Long teacherId,
+            @PathVariable Long courseId,
+            @RequestBody CourseDetails updatedDetails) {
+
+        CourseDetails updatedCourse = courseDetailsService.updateCourseSettings(teacherId, courseId, updatedDetails);
+        if (updatedCourse != null) {
+            return ResponseEntity.ok(updatedCourse);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     //fetch total no. of exams for a specific course
     @GetMapping("/{courseId}/total-exams")
     public ResponseEntity<Integer> getNumOfExams(@PathVariable Long courseId) {
@@ -74,20 +89,7 @@ public class CourseDetailsController {
         return ResponseEntity.ok(weightages);
     }
 
-    // Update settings of a specific course (attendance, exams, etc.)
-    @PutMapping("/{teacherId}/{courseId}/update")
-    public ResponseEntity<CourseDetails> updateCourseSettings(
-            @PathVariable Long teacherId,
-            @PathVariable Long courseId,
-            @RequestBody CourseDetails updatedDetails) {
 
-        CourseDetails updatedCourse = courseDetailsService.updateCourseSettings(teacherId, courseId, updatedDetails);
-        if (updatedCourse != null) {
-            return ResponseEntity.ok(updatedCourse);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
 }
 
