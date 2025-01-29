@@ -1,6 +1,5 @@
 package com.classroom.tracker.service;
 
-import com.classroom.tracker.entity.CourseDetails;
 import com.classroom.tracker.entity.StudentAttendance;
 import com.classroom.tracker.repository.StudentAttendanceRepository;
 import org.springframework.stereotype.Service;
@@ -18,5 +17,6 @@ public class StudentAttendanceService {
     public List<StudentAttendance> getAttendanceByCourseId(Long courseId) {
         return studentAttendanceRepository.findByCourseId(courseId);
     }
+
 
 }

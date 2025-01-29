@@ -25,4 +25,11 @@ public class AttendanceController {
         List<StudentDetails> students = studentDetailsService.getStudentsByCourseId(courseId);
         return ResponseEntity.ok(students);
     }
+
+    // Fetch student count for each course
+    @GetMapping("/studentCounts/{teacherId}")
+    public ResponseEntity<List<Map<String, Object>>> getStudentCountsByTeacher(@PathVariable Long teacherId) {
+        List<Map<String, Object>> studentCounts = studentDetailsService.getStudentsPerCourseByTeacher(teacherId);
+        return ResponseEntity.ok(studentCounts);
+    }
 }

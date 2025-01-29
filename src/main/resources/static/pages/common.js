@@ -81,3 +81,8 @@ function updateActiveCourseList(courses) {
 
   courseSelect.disabled = false;
 }
+
+// Helper function to convert string to proper case
+function toProperCase(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
