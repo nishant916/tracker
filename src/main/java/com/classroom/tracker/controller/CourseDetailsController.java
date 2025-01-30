@@ -89,6 +89,12 @@ public class CourseDetailsController {
         return ResponseEntity.ok(weightages);
     }
 
+    // Fetch inactive courses for a specific teacher
+    @GetMapping("/{teacherId}/inactive-courses")
+    public ResponseEntity<List<CourseDetails>> getInactiveCourses(@PathVariable Long teacherId) {
+        List<CourseDetails> courses = courseDetailsService.getCoursesByTeacherIdAndIsCourseActive(teacherId, false);
+        return ResponseEntity.ok(courses);
+    }
 
 
 }

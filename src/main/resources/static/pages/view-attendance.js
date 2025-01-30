@@ -1,10 +1,5 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-    fetchActiveCourses();
-
-    const courseDropdown = document.getElementById('activeCoursesList');
-    const classDropdown = document.getElementById('classNumberList');
-
+    const courseDropdown = document.getElementById('CoursesList');
     courseDropdown.addEventListener('change', () => {
         const selectedCourseId = courseDropdown.value;
         if (selectedCourseId) {
@@ -13,23 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Override the updateActiveCourseList function to add filtering logic
-function updateActiveCourseList(courses) {
-    const filteredCourses = courses.filter(course => course.isAttendanceEnabled);
-
-    const courseSelect = document.getElementById('activeCoursesList');
-    courseSelect.innerHTML = '<option selected disabled>select course</option>'; // Clear existing options
-
-    // Populate the dropdown with the filtered courses
-    filteredCourses.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.courseId;
-        option.textContent = c.course;
-        courseSelect.appendChild(option);
-    });
-
-    courseSelect.disabled = false;
-}
 
 //fetch student details for the selected course
 function fetchStudentsForCourse(courseId) {
@@ -48,9 +26,26 @@ function fetchStudentsForCourse(courseId) {
 function populateStudentTable(studentDetails, courseId) {
     const tableContainer = document.getElementById('studentsTableContainer');
     const tableBody = document.getElementById('studentsTableBody');
+    const table = document.getElementById('view-attendance-table');
+    const tableHead = table.querySelector('thead');
 
     // Clear previous table rows
     tableBody.innerHTML = '';
+    tableHead.innerHTML = '';
+
+    // Create the header row
+    const headerRow = document.createElement('tr');
+    const headers = ['Student ID', 'First Name', 'Last Name'];
+
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+
+    tableHead.appendChild(headerRow); // Append headers to the table head
+
 
     if (studentDetails && studentDetails.length > 0) {
         studentDetails.forEach(student => {

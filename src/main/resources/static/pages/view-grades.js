@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchActiveCourses();
-
-    const courseDropdown = document.getElementById('activeCoursesList');
-    const classDropdown = document.getElementById('classNumberList');
-
+    const courseDropdown = document.getElementById('CoursesList');
     courseDropdown.addEventListener('change', () => {
         const selectedCourseId = courseDropdown.value;
         if (selectedCourseId) {
@@ -25,13 +21,29 @@ function fetchStudentsForCourse(courseId) {
         .catch(error => console.error('Error fetching students:', error));
 }
 
-// Function to populate the student table with studentId, firstName & lastName
+//add student headers and populate the student table with studentId, firstName & lastName
 function populateStudentTable(studentDetails, courseId) {
     const tableContainer = document.getElementById('studentsTableContainer');
+    const table = document.getElementById('view-grades-table');
+    const tableHead = table.querySelector('thead');
     const tableBody = document.getElementById('studentsTableBody');
 
-    // Clear previous table rows
+    // Clear previous table rows and headers
+    tableHead.innerHTML = '';
     tableBody.innerHTML = '';
+
+    // Create the header row
+    const headerRow = document.createElement('tr');
+    const headers = ['Student ID', 'First Name', 'Last Name'];
+
+    headers.forEach(headerText => {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+
+    tableHead.appendChild(headerRow); // Append headers to the table head
 
     if (studentDetails && studentDetails.length > 0) {
         studentDetails.forEach(student => {
@@ -43,9 +55,8 @@ function populateStudentTable(studentDetails, courseId) {
             `;
             tableBody.appendChild(row);
         });
-
         tableContainer.style.display = 'block'; // Make the table visible
-        fetchCourseDetails(courseId); // Call the new function to fetch course details
+        fetchCourseDetails(courseId);
     } else {
         console.warn('No students found for the selected course.');
         tableContainer.style.display = 'none'; // Hide the table if no students
@@ -97,9 +108,19 @@ function addTableHeaders(courseId, totalExams, examNames, maxMarks, weightages) 
         const classHeader = document.createElement('th');
         classHeader.scope = 'col';
         let percentage = Math.round(weightages[i] * 100);
-        classHeader.textContent = `${examNames[i]} (out of ${maxMarks[i]} ${percentage}%)`;
+
+        // Use innerHTML with span for styling
+        classHeader.innerHTML = `
+        ${examNames[i]}<br>
+        <span style="font-size: 0.8em; color: grey; font-weight: normal;">
+            ?/${maxMarks[i]} (${percentage}%)
+        </span>
+    `;
+
         headerRow.appendChild(classHeader);
     }
+
+
 
     // Add a header for the Final Grade column
     const finalGradeHeader = document.createElement('th');
@@ -119,7 +140,7 @@ function fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightag
         .catch(error => console.error('Error fetching student grades:', error));
 }
 
-    function calculateFinalGrade(studentGrades, courseId, totalExams, examNames, maxMarks, weightages) {
+function calculateFinalGrade(studentGrades, courseId, totalExams, examNames, maxMarks, weightages) {
         const finalGrades = studentGrades.map(student => {
             let weightedTotal = 0;
             let totalWeight = 0;
@@ -145,8 +166,6 @@ function fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightag
         console.log('Calculated Final Grades:', finalGrades);
         populateGrades(totalExams, studentGrades, finalGrades);
     }
-
-
 
 function populateGrades(totalExams, studentGrades, finalGrades) {
     const tableBody = document.getElementById('studentsTableBody');
@@ -180,3 +199,6 @@ function populateGrades(totalExams, studentGrades, finalGrades) {
     });
 }
 
+//remove student headers before course is selected for both view attendance and grade
+//link for view grade stats
+//dropdown for view grades for all courses (active & inactive)
