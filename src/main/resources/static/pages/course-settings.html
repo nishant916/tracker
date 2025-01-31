@@ -67,7 +67,6 @@
             </li>
           </ul>
 
-
         </div>
       </div>
     </nav>
@@ -101,8 +100,8 @@
 
           <!-- Toggle Course Active/Inactive -->
           <div class="mb-3 form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="isCourseActive" checked>
-            <label class="form-check-label" for="isCourseActive">Is course active</label>
+            <input class="form-check-input" type="checkbox" role="switch" id="isCourseActive" checked onchange="toggleLabel()">
+            <label class="form-check-label" for="isCourseActive" id="isCourseActiveLabel">Course is active</label>
           </div>
 
           <hr>
@@ -119,13 +118,38 @@
           <div class="mb-3 d-flex align-items-start gap-3">
             <div>
               <label for="totalClasses" class="form-label">Total number of classes</label>
-              <input type="number" class="form-control" id="totalClasses" aria-describedby="classesHelp1" min="0" step="1">
-              <div id="classesHelp1" class="form-text">Please enter a non-negative number.</div>
+              <select class="form-select" id="totalClasses">
+                <option value="" disabled selected>please select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+              </select>
             </div>
+
             <div>
-              <label for="minAttendance" class="form-label">Minimum Attendance (in decimal)</label>
-              <input type="number" class="form-control" id="minAttendance" aria-describedby="classesHelp2" min="0" max="1" step="0.1">
-              <div id="classesHelp2" class="form-text">Please enter percentage out of 100.</div>
+              <label for="minAttendance" class="form-label">Minimum Attendance %</label>
+              <select class="form-select" id="minAttendance">
+                <option value="" disabled selected>please select</option>
+                <option value="0">No min attendance</option>
+                <option value="0.5">50%</option>
+                <option value="0.55">55%</option>
+                <option value="0.6">60%</option>
+                <option value="0.65">65%</option>
+                <option value="0.7">70%</option>
+                <option value="0.75">75%</option>
+                <option value="0.8">80%</option>
+                <option value="0.85">85%</option>
+                <option value="0.9">90%</option>
+                <option value="0.95">95%</option>
+                <option value="1">100%</option>
+              </select>
             </div>
           </div>
 
@@ -152,194 +176,13 @@
           </div>
 
           <!-- Exam Fields -->
-          <div id="examFields">
-            <!-- Exam 1 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam1_label" class="form-label">Exam 1 Name</label>
-                <input type="text" id="exam1_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam1_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam1_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam1_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam1_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 2 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam2_label" class="form-label">Exam 2 Name</label>
-                <input type="text" id="exam2_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam2_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam2_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam2_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam2_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 3 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam3_label" class="form-label">Exam 3 Name</label>
-                <input type="text" id="exam3_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam3_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam3_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam3_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam3_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 4 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam4_label" class="form-label">Exam 4 Name</label>
-                <input type="text" id="exam4_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam4_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam4_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam4_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam4_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 5 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam5_label" class="form-label">Exam 5 Name</label>
-                <input type="text" id="exam5_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam5_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam5_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam5_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam5_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 6 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam6_label" class="form-label">Exam 6 Name</label>
-                <input type="text" id="exam6_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam6_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam6_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam6_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam6_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 7 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam7_label" class="form-label">Exam 7 Name</label>
-                <input type="text" id="exam7_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam7_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam7_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam7_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam7_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 8 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam8_label" class="form-label">Exam 8 Name</label>
-                <input type="text" id="exam8_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam8_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam8_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam8_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam8_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 9 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam9_label" class="form-label">Exam 9 Name</label>
-                <input type="text" id="exam9_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam9_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam9_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam9_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam9_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-
-            <!-- Exam 10 -->
-            <div class="exam-field d-flex align-items-center mb-3 gap-3">
-              <div class="exam-field-group">
-                <label for="exam10_label" class="form-label">Exam 10 Name</label>
-                <input type="text" id="exam10_label" class="form-control">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam10_mm" class="form-label">Maximum Marks</label>
-                <input type="number" id="exam10_mm" class="form-control" min="0" step="1">
-              </div>
-
-              <div class="exam-field-group">
-                <label for="exam10_weightage" class="form-label">Weightage (%)</label>
-                <input type="number" id="exam10_weightage" class="form-control" min="0" max="100" step="1">
-              </div>
-            </div>
-          </div>
+          <div id="examFields"></div>
 
           <div id="container-wrapper"></div>
 
           <button id="saveButton" type="submit" class="btn btn-primary">Save Changes</button>
         </form>
       </div>
-    </div>
     
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>

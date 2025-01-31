@@ -1,9 +1,8 @@
-/* Next Steps:
-Ensure your backend has appropriate API endpoints like /api/courses/{id}/settings to handle fetching and updating course data.
-Adjust field names in the updateCourseSettings function to match the exact data structure of your backend API.*/
-
 document.addEventListener('DOMContentLoaded', () => {
   
+  // Generating exam fields on load
+  generateExamFields();
+
   // Disable fields on load
   disableFields();
 
@@ -16,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener for course selection change
   document.getElementById('courseSelect').addEventListener('change', handleCourseSelection);
+
+  // Event listener for course active checkbox change
+  document.getElementById('isCourseActive').addEventListener('change', toggleLabel);
   
   // Event listener for the submit button to save the changes
   //document.getElementById('saveButton').addEventListener('click', saveCheck);
@@ -23,6 +25,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleNumOfExamsChange();
 });
+
+function generateExamFields() {
+  const examFieldsContainer = document.getElementById('examFields');
+  for (let i = 1; i <= 10; i++) {
+    const examFieldHTML = `
+      <div class="exam-field d-flex align-items-center mb-3 gap-3">
+        <div class="exam-field-group">
+          <label for="exam${i}_label" class="form-label">Exam ${i} Name</label>
+          <input type="text" id="exam${i}_label" class="form-control">
+        </div>
+        <div class="exam-field-group">
+          <label for="exam${i}_mm" class="form-label">Maximum Marks</label>
+          <input type="number" id="exam${i}_mm" class="form-control" min="0" step="1">
+        </div>
+        <div class="exam-field-group">
+          <label for="exam${i}_weightage" class="form-label">Weightage% (in decimal)</label>
+          <select id="exam${i}_weightage" class="form-select">
+            <option value="" disabled selected>please select</option>
+            <option value="0">0%</option>
+            <option value="0.1">10%</option>
+            <option value="0.2">20%</option>
+            <option value="0.3">30%</option>
+            <option value="0.4">40%</option>
+            <option value="0.5">50%</option>
+            <option value="0.6">60%</option>
+            <option value="0.7">70%</option>
+            <option value="0.8">80%</option>
+            <option value="0.9">90%</option>
+            <option value="1">100%</option>
+          </select>
+        </div>
+      </div>
+    `;
+    examFieldsContainer.insertAdjacentHTML('beforeend', examFieldHTML);
+  }
+}
+
 
 function fetchCourses() {
 
@@ -116,31 +155,40 @@ function populateFields(data) {
     }
   }
 
-  enableFields(); // Enable any other form fields that need enabling
+  enableFields(); // Enable other form fields
   // Adjust fields based on numOfExams selection
   handleNumOfExamsChange();
 }
 
 
-// Enable/disable fields based on the selected number of exams
+// Enable/disable exam fields based on the selected number of exams
 function handleNumOfExamsChange() {
   const numOfExams = parseInt(document.getElementById('numOfExams').value, 10);
   const examFields = document.querySelectorAll('#examFields .exam-field');
 
   examFields.forEach((field, index) => {
     const inputs = field.querySelectorAll('input');
+    const select = field.querySelector('select');
+
     if (index < numOfExams) {
-      inputs.forEach(input => (input.disabled = false)); // Enable fields
+      inputs.forEach(input => (input.disabled = false)); // Enable input fields
+      if (select) select.disabled = false; // Enable select dropdown
     } else {
       inputs.forEach(input => {
-        input.disabled = true; // Disable fields
+        input.value = ""; // Clear input field values
+        input.disabled = true; // Disable input fields
       });
+      if (select) {
+        select.value = "0"; // Set dropdown to 0%
+        select.disabled = true; // Disable select dropdown
+      }
     }
   });
 }
 
 function enableFields() {
   document.getElementById('isCourseActive').disabled = false;
+  toggleLabel();
   document.getElementById('enableAttendance').disabled = false;
   document.getElementById('totalClasses').disabled = false;
   document.getElementById('minAttendance').disabled = false;
@@ -157,6 +205,13 @@ function disableFields() {
   document.querySelector('button[type="submit"]').disabled = true;
 }
 
+// Toggle course active label based on selection
+function toggleLabel() {
+    const courseActiveCheckbox = document.getElementById('isCourseActive');
+    const courseActiveLabel = document.getElementById('isCourseActiveLabel');
+    courseActiveLabel.textContent = courseActiveCheckbox.checked ? 'Course is active' : 'Course is inactive';
+  }
+
 // Handle submit button click to update the course settings
 function handleSubmit(event) {
   event.preventDefault(); // Prevent default form submission
@@ -170,13 +225,13 @@ function handleSubmit(event) {
     totalClasses: parseInt(document.getElementById('totalClasses').value || 10,10), //convert to int
     minAttendance: parseFloat(document.getElementById('minAttendance').value || 0.75), //convert to float
     isCourseActive: document.getElementById('isCourseActive').checked,
-    enableAttendance: document.getElementById('enableAttendance').checked,
+    isAttendanceEnabled: document.getElementById('enableAttendance').checked || false,
     numOfExams: parseInt(document.getElementById('numOfExams').value,10) //convert to int
   };
 
   // Add exam data to the update object
   for (let i = 1; i <= 10; i++) {
-    data[`exam${i}Label`] = document.getElementById(`exam${i}_label`).value || '';
+    data[`exam${i}Label`] = document.getElementById(`exam${i}_label`).value || `Exam ${i}`;
     data[`exam${i}MaxMarks`] = parseInt(document.getElementById(`exam${i}_mm`).value || 0,10); //convert to int
     data[`exam${i}Weightage`] = parseFloat(document.getElementById(`exam${i}_weightage`).value || 0); //convert to float
   }

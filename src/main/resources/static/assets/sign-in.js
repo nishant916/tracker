@@ -27,7 +27,7 @@ function handleLogin(event) {
             if (isAuthenticated) {
                 console.log(isAuthenticated.teacherId);
                 console.log('Login successful');
-                window.location.href = `/pages/course-settings.html?teacherId=${isAuthenticated.teacherId}`;
+                window.location.href = `/pages/home-page.html?teacherId=${isAuthenticated.teacherId}`;
             } else {
                 alert('Wrong username or password');
                 document.getElementById('teacherPassword').value = '';

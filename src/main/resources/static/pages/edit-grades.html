@@ -88,11 +88,38 @@
           </select>
         </div>
 
+        <!-- Drop-down for exams selection -->
+        <div class="mb-3">
+          <label for="examList" class="form-label">Exams</label>
+          <select class="form-select" id="examList" disabled>
+            <option selected disabled>select exam</option>
+            <!-- Dynamic options will be added here by JavaScript -->
+          </select>
+        </div>
+
+        <!-- Table Container -->
+        <div id="studentsTableContainer" style="display: none;" class="mt-4">
+          <h4>Student List</h4>
+          <table id="edit-grades-table" class="table table-striped table-bordered">
+            <thead id="studentsTableHead" class="table-dark">
+            <tr>
+              <th scope="col">Student ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col"></th> <!-- This will be dynamically updated -->
+            </tr>
+            </thead>
+            <tbody id="studentsTableBody"></tbody>
+          </table>
+          <!-- Save Button -->
+          <button id="saveButton" type="button" class="btn btn-primary mt-3">Save Changes</button>
+        </div>
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
+    <script src="edit-grades.js"></script>
     <script src="common.js"></script>
   </body>
 </html>

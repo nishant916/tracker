@@ -39,6 +39,13 @@ public class CourseDetailsController {
         return ResponseEntity.ok(courses);
     }
 
+    // Fetch total classes for a specific course
+    @GetMapping("/{courseId}/total-classes")
+    public ResponseEntity<Integer> getTotalClasses(@PathVariable Long courseId) {
+        int totalClasses = courseDetailsService.getTotalClassesByCourseId(courseId);
+        return ResponseEntity.ok(totalClasses);
+    }
+
     // Update settings of a specific course (attendance, exams, etc.)
     @PutMapping("/{teacherId}/{courseId}/update")
     public ResponseEntity<CourseDetails> updateCourseSettings(
@@ -53,6 +60,45 @@ public class CourseDetailsController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    //fetch total no. of exams for a specific course
+    @GetMapping("/{courseId}/total-exams")
+    public ResponseEntity<Integer> getNumOfExams(@PathVariable Long courseId) {
+        int totalExams = courseDetailsService.getNumOfExamsByCourseId(courseId);
+        return ResponseEntity.ok(totalExams);
+    }
+
+    // Fetch exam names for a specific course
+    @GetMapping("/{courseId}/exam-names")
+    public ResponseEntity<List<String>> getExamNames(@PathVariable Long courseId) {
+        List<String> examNames = courseDetailsService.getExamNamesByCourseId(courseId);
+        return ResponseEntity.ok(examNames);
+    }
+
+    //fetch max marks for a specific course
+    @GetMapping("/{courseId}/max-marks")
+    public ResponseEntity<List<Integer>> getMaxMarks(@PathVariable Long courseId) {
+        List<Integer> maxMarks = courseDetailsService.getMaxMarksByCourseId(courseId);
+        return ResponseEntity.ok(maxMarks);
+    }
+
+    //fetch weightage of each exam of a specific course
+    @GetMapping("/{courseId}/weightages")
+    public ResponseEntity<List<Double>> getWeightages(@PathVariable Long courseId) {
+        List<Double> weightages = courseDetailsService.getWeightagesByCourseId(courseId);
+        return ResponseEntity.ok(weightages);
+    }
+
+    // Fetch inactive courses for a specific teacher
+    @GetMapping("/{teacherId}/inactive-courses")
+    public ResponseEntity<List<CourseDetails>> getInactiveCourses(@PathVariable Long teacherId) {
+        List<CourseDetails> courses = courseDetailsService.getCoursesByTeacherIdAndIsCourseActive(teacherId, false);
+        return ResponseEntity.ok(courses);
+    }
+
+
+}
+
 //TODO: remove this commented code
 
 /*
@@ -73,5 +119,5 @@ public class CourseDetailsController {
             return ResponseEntity.notFound().build();
         }
     }*/
-}
+
 

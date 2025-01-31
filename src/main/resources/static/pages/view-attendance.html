@@ -60,7 +60,7 @@
           <!-- Username Dropdown -->
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
-              <span id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</span>
+              <span id="username" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Username</span>
               <ul class="dropdown-menu">
                 <li><a id="logoutLink" class="dropdown-item" href="#">Logout</a></li>
               </ul>
@@ -74,25 +74,39 @@
 
 
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
-      <div class="w-100" style="max-width: 900px; padding: 20px;">
+      <div class="w-100" style="max-width: 1100px; padding: 20px;">
         <div class="mb-3">
           <h1>View Attendance</h1>
         </div>
-
         <!-- Drop-down for active courses selection -->
         <div class="mb-3">
-          <label for="activeCoursesList" class="form-label">Course Name</label>
-          <select class="form-select" id="activeCoursesList">
+          <label for="CoursesList" class="form-label">Course Name</label>
+          <select class="form-select" id="CoursesList">
             <option selected disabled>select course</option>
-            <!-- Dynamic options will be added here by JavaScript -->
+            <!-- Dynamic options of inactive courses will be added here by JavaScript -->
           </select>
         </div>
-        
+
+        <!--attendance table -->
+        <div id="studentsTableContainer" class="table-responsive" >
+          <table id="view-attendance-table" class="table">
+            <thead>
+            <tr>
+                <!-- Additional columns for classes will be added here dynamically -->
+            </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <!-- Student rows will be added here dynamically -->
+            </tbody>
+          </table>
+
+        </div>
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
-    <script src="common.js"></script>
+    <script src="view-attendance.js"></script>
+    <script src="common1.js"></script>
   </body>
 </html>
