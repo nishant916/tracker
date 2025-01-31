@@ -1,6 +1,5 @@
 package com.classroom.tracker.service;
 
-import com.classroom.tracker.DTO.AttendanceStatsDTO;
 import com.classroom.tracker.DTO.GradingStats2DTO;
 import com.classroom.tracker.DTO.GradingStatsDTO;
 import com.classroom.tracker.entity.CourseDetails;
