@@ -78,7 +78,7 @@
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
       <div class="w-100" style="max-width: 1100px; padding: 20px;">
         <div class="mb-3">
-          <h1 id="welcomeText">Welcome User! Here’s a snapshot of your courses</h1>
+          <h1 id="welcomeText">Welcome User! Here’s a snapshot of your courses.</h1>
         </div>
 
         <!-- Courses Section -->
@@ -113,9 +113,8 @@
         </div>
 
 
-
+        <!-- Attendance Summary Section -->
         <div class="container mt-5">
-          <!-- Attendance Summary Section -->
           <h3 class="text-primary text-center">Attendance Summary (Active Courses)</h3>
           <hr>
           <div class="row" id="attendanceSummaryContainer">
@@ -123,11 +122,19 @@
           </div>
         </div>
 
+        <!-- Performance Summary Section -->
         <div class="container mt-5">
-          <!-- Performance Summary Section -->
-          <h3 class="text-primary text-center">Performance Summary (Active Courses)</h3>
+          <h3 class="text-primary text-center">Performance Summary</h3>
           <hr>
-          <div class="row" id="performanceSummaryContainer">
+          <!-- Active Courses -->
+          <h3 class="text-start" style="color:rgba(54, 162, 235, 1.0)">Active Courses</h3>
+          <div class="row" id="performanceActiveCoursesSummaryContainer">
+            <!-- Dynamic content will be inserted here -->
+          </div>
+
+          <!-- Completed Courses -->
+          <h3 class="text-start" style="color:rgba(255, 99, 132, 0.8)">Completed Courses</h3>
+          <div class="row" id="performanceCompletedCoursesSummaryContainer">
             <!-- Dynamic content will be inserted here -->
           </div>
         </div>

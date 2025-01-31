@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAllCourses();
   createStudentsAcrossCoursesCharts();
   makeAttendanceChart();
+  fetchGradingStats();
 });
 
   function fetchAllCourses() {
@@ -272,4 +273,103 @@ function renderPieChart(canvas, present, absent, late) {
   });
 
   chartInstances.set(canvas, chart);
+}
+
+function fetchGradingStats() {
+  fetch(`/api/grading-summary/${teacherId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Fetched Grading stats:', data);
+      populateGradingOfActiveCourses(data);
+    })
+    .catch((error) => console.error("Error fetching grading stats:", error));
+}
+
+function populateGradingOfActiveCourses(gradingStats) {
+  const container = document.getElementById("performanceActiveCoursesSummaryContainer");
+  container.innerHTML = ""; // Clear previous content
+
+  gradingStats.forEach((course) => {
+    const courseCard = document.createElement("div");
+    courseCard.classList.add("col-md-6", "mb-4");
+
+    let examsHtml = "";
+    for (let i = 0; i < course.numOfCompletedExams; i++) {
+      examsHtml += `
+        <h6 class="text-center">${course.examLabel[i]}</h6>
+        <p class="text-muted text-center" style="font-size: 12px;">(Maximum Marks: ${course.maxMarks[i]})</p>
+        <canvas id="examChart-${course.courseId}-${i}" class="exam-chart"></canvas>
+      `;
+      if (i<(course.numOfCompletedExams-1)){
+        examsHtml += `
+          <hr>
+        `;
+      }
+    }
+
+    courseCard.innerHTML = `
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title text-center" style="color:rgba(54, 162, 235, 1.0)">${course.courseName}</h5>
+          ${examsHtml}
+        </div>
+      </div>
+    `;
+
+    container.appendChild(courseCard);
+
+    // Generate charts for each exam
+    for (let i = 0; i < course.numOfCompletedExams; i++) {
+      createExamChart(`examChart-${course.courseId}-${i}`, course, i);
+    }
+  });
+}
+
+function createExamChart(canvasId, course, examIndex) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+
+  const darkerColor = "rgba(33, 139, 191, 1.0)"; // Darker shade for highest
+  const lighterColor = "rgba(104, 186, 255, 1.0)"; // Lighter shade for lowest
+  const averagePattern = "rgba(54, 162, 235, 0.5)";  // Transparent light blue for average
+  const medianPattern = "rgba(54, 162, 235, 0.3)";  // More transparent blue for median
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Highest", "Lowest", "Average", "Median"],
+      datasets: [
+        {
+          label: course.examLabel[examIndex],
+          data: [
+            course.highestScore[examIndex],
+            course.lowestScore[examIndex],
+            course.averageScore[examIndex],
+            course.medianScore[examIndex],
+          ],
+          backgroundColor: [darkerColor,lighterColor,averagePattern,medianPattern],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      indexAxis: 'y', // Horizontal bar chart
+      scales: {
+        x: {
+          beginAtZero: true, // Ensures scores start from 0
+          title: {
+            display: true,
+            text: "Grades", // X-axis label
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        },
+      },
+      plugins: {
+        legend: { display: false }, // Removes legend
+      },
+    },
+  });
 }
