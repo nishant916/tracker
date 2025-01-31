@@ -1,6 +1,7 @@
 package com.classroom.tracker.service;
 
 import com.classroom.tracker.DTO.AttendanceStatsDTO;
+import com.classroom.tracker.DTO.GradingStats2DTO;
 import com.classroom.tracker.DTO.GradingStatsDTO;
 import com.classroom.tracker.entity.CourseDetails;
 import com.classroom.tracker.entity.StudentGrades;
@@ -22,10 +23,9 @@ public class GradingSummaryService {
         this.studentGradesRepository = studentGradesRepository;
     }
 
-    public List<GradingStatsDTO> getGradingStatsForCourses(Long teacherId){
+    public List<GradingStatsDTO> getGradingStatsForCourses(Long teacherId) {
         List<GradingStatsDTO> statsList = new ArrayList<>();
 
-        // TODO: Add Code here to populate the course-wise statistics:
         // Fetch active courses for the teacher
         List<CourseDetails> courses = courseDetailsRepository.findByTeacherIdAndIsCourseActive(teacherId, true);
 
@@ -125,4 +125,88 @@ public class GradingSummaryService {
             return scores.get(size / 2);
         }
     }
+
+    public List<GradingStats2DTO> getGradingStatsForCompletedCourses(Long teacherId) {
+        List<GradingStats2DTO> statsList = new ArrayList<>();
+
+        // Fetch completed courses for the teacher
+        List<CourseDetails> courses = courseDetailsRepository.findByTeacherIdAndIsCourseActive(teacherId, false);
+
+        for (CourseDetails course : courses) {
+            GradingStats2DTO statsDTO = new GradingStats2DTO();
+            statsDTO.setCourseName(course.getCourse());
+            statsDTO.setCourseId(course.getCourseId());
+            statsDTO.setNumOfExams(course.getNumOfExams());
+
+            List<StudentGrades> gradesList = studentGradesRepository.findByCourseId(course.getCourseId());
+
+            // Store max marks and weightages
+            int numExams = course.getNumOfExams();
+            int[] maxMarks = new int[numExams];
+            double[] weightages = new double[numExams];
+
+            // Loop to update maxMarks and weightages arrays
+            for (int i = 0; i < numExams; i++) {
+                try {
+                    // Using reflection to get exam max marks and weightage dynamically
+                    maxMarks[i] = (int) CourseDetails.class.getMethod("getExam" + (i + 1) + "MaxMarks").invoke(course);
+                    weightages[i] = (double) CourseDetails.class.getMethod("getExam" + (i + 1) + "Weightage").invoke(course);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Initialize grade category counters
+            int[] gradeCategories = new int[11];
+
+            for (StudentGrades grade : gradesList) {
+                double totalObtained = 0;
+                double totalMax = 0;
+
+                for (int i = 0; i < numExams; i++) {
+                    try {
+                        // Use reflection to get exam grades dynamically
+                        Integer examGrade = (Integer) StudentGrades.class.getMethod("getExam" + (i + 1) + "Grades").invoke(grade);
+                        if (examGrade != null) {
+                            totalObtained += examGrade * weightages[i];
+                            totalMax += maxMarks[i] * weightages[i];
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Avoid division by zero
+                if (totalMax > 0) {
+                    double percentage = (totalObtained / totalMax) * 100;
+
+                    // Determine the grade category
+                    int categoryIndex = getCategoryIndex(percentage);
+                    gradeCategories[categoryIndex]++;
+                }
+            }
+
+            statsDTO.setGradeCategories(gradeCategories);
+            statsList.add(statsDTO);
+        }
+        return statsList;
+    }
+
+    /**
+     * Determines the category index based on the percentage.
+     */
+    private int getCategoryIndex(double percentage) {
+        if (percentage < 50) return 0;
+        if (percentage < 55) return 1;
+        if (percentage < 60) return 2;
+        if (percentage < 65) return 3;
+        if (percentage < 70) return 4;
+        if (percentage < 75) return 5;
+        if (percentage < 80) return 6;
+        if (percentage < 85) return 7;
+        if (percentage < 90) return 8;
+        if (percentage < 95) return 9;
+        return 10; // Above 95%
+    }
+
 }

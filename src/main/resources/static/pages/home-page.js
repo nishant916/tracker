@@ -3,6 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
   createStudentsAcrossCoursesCharts();
   makeAttendanceChart();
   fetchGradingStats();
+  fetchGradingStatsCompletedCourses();
+
+  // Event listeners for radio buttons
+  document.getElementById('viewPercentages').addEventListener('change', () => {
+    if (currentViewType !== "percentages") {
+      currentViewType = "percentages";
+      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with percentages
+    }
+  });
+
+  document.getElementById('viewGrades').addEventListener('change', () => {
+    if (currentViewType !== "grades") {
+      currentViewType = "grades";
+      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with grades
+    }
+  });
 });
 
   function fetchAllCourses() {
@@ -96,7 +112,15 @@ function createStudentsAcrossCoursesCharts() {
           },
           scales: {
             x: {
-              beginAtZero: true, // Ensure the X-axis starts at 0
+              beginAtZero: true,
+               title: {
+               display: true,
+               text: 'Number of Students',
+               font: {
+                 size: 14 ,
+                 weight: 'bold'
+               }
+             }
             },
           },
         },
@@ -149,7 +173,7 @@ function makeAttendanceChart() {
 
         // Generate the course card
         const courseCard = `
-          <div class="col-md-6 mb-4">
+          <div class="col-md-4 mb-4">
             <div class="card shadow-sm">
               <div class="card-body">
                 <h5 class="card-title text-center text-primary">${courseName}</h5>
@@ -164,7 +188,7 @@ function makeAttendanceChart() {
                 <div class="text-center">
                   <canvas id="attendancePieChart-${index}" class="attendancePieChart" width="150" height="150"></canvas>
                 </div>
-                <h6 class="mt-4 text-danger">Students Below Minimum Attendance (${(minAttendance * 100).toFixed(
+                <h6 class="mt-4 text-danger text-center">Students Below Minimum Attendance (${(minAttendance * 100).toFixed(
                   1
                 )}%)</h6>
                 <ul class="list-group" id="studentList-${index}">
@@ -192,7 +216,7 @@ function makeAttendanceChart() {
           })
           .then((students) => {
             const studentList = document.getElementById(`studentList-${index}`);
-            studentList.innerHTML = ""; // Clear the "Loading..." text
+            studentList.innerHTML = "";
             console.log("Fetched students list: ", students);
 
             if (students.length === 0) {
@@ -205,7 +229,7 @@ function makeAttendanceChart() {
 
               // Combine firstName, lastName, and attendance percentage
               const studentItem = `
-                <li class="list-group-item">
+                <li class="list-group-item text-center text-muted small">
                   ${firstName} ${lastName} (${attendancePercentage.toFixed(1)}%)
                 </li>
               `;
@@ -320,17 +344,19 @@ function populateGradingOfActiveCourses(gradingStats) {
 
     // Generate charts for each exam
     for (let i = 0; i < course.numOfCompletedExams; i++) {
-      createExamChart(`examChart-${course.courseId}-${i}`, course, i);
+      createExamChart(`examChart-${course.courseId}-${i}`, course, i,course.maxMarks[i]);
     }
   });
 }
 
-function createExamChart(canvasId, course, examIndex) {
+function createExamChart(canvasId, course, examIndex, examMaxMarks) {
   const ctx = document.getElementById(canvasId);
   if (!ctx) return;
 
-  const darkerColor = "rgba(33, 139, 191, 1.0)"; // Darker shade for highest
-  const lighterColor = "rgba(104, 186, 255, 1.0)"; // Lighter shade for lowest
+  //const Color1 = "rgba(33, 139, 191, 1.0)"; // Darker shade for highest
+  //const Color2 = "rgba(104, 186, 255, 1.0)"; // Lighter shade for lowest
+  const Color1 = "#28a745"; // green
+  const Color2 = "#dc3545"; // red
   const averagePattern = "rgba(54, 162, 235, 0.5)";  // Transparent light blue for average
   const medianPattern = "rgba(54, 162, 235, 0.3)";  // More transparent blue for median
 
@@ -347,7 +373,7 @@ function createExamChart(canvasId, course, examIndex) {
             course.averageScore[examIndex],
             course.medianScore[examIndex],
           ],
-          backgroundColor: [darkerColor,lighterColor,averagePattern,medianPattern],
+          backgroundColor: [Color1,Color2,averagePattern,medianPattern],
           borderWidth: 1,
         },
       ],
@@ -357,6 +383,7 @@ function createExamChart(canvasId, course, examIndex) {
       scales: {
         x: {
           beginAtZero: true, // Ensures scores start from 0
+          max: examMaxMarks,
           title: {
             display: true,
             text: "Grades", // X-axis label
@@ -371,5 +398,198 @@ function createExamChart(canvasId, course, examIndex) {
         legend: { display: false }, // Removes legend
       },
     },
+  });
+}
+
+let currentViewType = "percentages";  // Default view type
+const charts = {};
+
+function fetchGradingStatsCompletedCourses() {
+  fetch(`/api/grading-summary/completed/${teacherId}`)
+    .then((response) => response.json())
+    .then((gradingStats) => {
+      console.log('Fetched Grading stats completed courses:', gradingStats);
+      populateGradingOfCompletedCourses(gradingStats);
+    })
+    .catch((error) => console.error("Error fetching grading stats:", error));
+}
+
+function populateGradingOfCompletedCourses(gradingStats) {
+  const container = document.getElementById("performanceCompletedCoursesSummaryContainer");
+  const radioButtonsContainer = document.getElementById("radio-buttons-container");
+
+  container.innerHTML = "";  // Clear previous content
+
+  if (gradingStats.length > 0) {
+    radioButtonsContainer.style.display = "block";  // Show radio buttons container
+
+    // Update radio button states based on current view type
+    const percentagesRadioButton = document.getElementById("viewPercentages");
+    const gradesRadioButton = document.getElementById("viewGrades");
+
+    if (currentViewType === "percentages") {
+      percentagesRadioButton.checked = true;
+    } else {
+      gradesRadioButton.checked = true;
+    }
+
+    gradingStats.forEach((course) => {
+      const courseColumn = document.createElement("div");
+      courseColumn.classList.add("col-md-12", "mb-4");
+
+      // Create chart card structure
+      const chartId = `gradeCompleteChart-${course.courseId}`;
+      courseColumn.innerHTML = `
+        <div class="card shadow-sm" style="max-height: 500px; overflow: auto;">
+          <div class="card-body" style="overflow-y: hidden;">
+            <h5 class="card-title text-center" style="color:rgba(255, 99, 132, 0.8)">${course.courseName}</h5>
+            <canvas id="${chartId}" class="grade-chart"></canvas>
+          </div>
+        </div>
+      `;
+      container.appendChild(courseColumn);
+
+      // Apply styles
+      const gradeChart = courseColumn.querySelector(".grade-chart");
+      gradeChart.style.height = "250px";  // Set chart height
+      gradeChart.style.width = "100%";    // Ensure full width
+
+      // Set container overflow behavior
+      container.style.maxHeight = "100vh";
+      container.style.overflowY = "auto";
+
+      // Create or update the chart based on the current view type
+      createGradingForCompletedCoursesChart(chartId, course.gradeCategories, currentViewType);
+    });
+  } else {
+    radioButtonsContainer.style.display = "none";  // Hide radio buttons if no completed courses
+  }
+}
+
+function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewType) {
+  const ctx = document.getElementById(canvasId);
+  if (!ctx) return;
+
+  // Destroy the existing chart if it exists
+  if (charts[canvasId]) {
+    console.log('Destroying existing chart for canvasId:', canvasId);
+    charts[canvasId].destroy();
+  }
+
+  // Define chart labels based on view type (grades or percentages)
+  const labels = viewType === "grades"
+    ? ["5", "4.0", "3.7", "3.3", "3.0", "2.7", "2.3", "2.0", "1.7", "1.3", "1.0"]
+    : ["<50%", "50-55%", "55-60%", "60-65%", "65-70%", "70-75%", "75-80%", "80-85%", "85-90%", "90-95%", ">95%"];
+
+  const xAxisLabel = viewType === "grades" ? 'Grades' : 'Percentage';
+
+  // Log the label type for debugging
+  console.log('Chart labels:', labels);
+
+  // Create a new chart instance
+  const chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Grade Distribution",
+        data: gradeCategories.map(num => Number(num) || 0),
+        backgroundColor: [
+          "#D84F6B", "#FF80A1", "#FF80A1", "#FF80A1", "#FF80A1",
+          "#FF80A1", "#FF80A1", "#FF80A1", "#FF80A1", "#FF80A1", "#FF80A1"
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1 },
+          title: {
+            display: true,
+            text: 'Number of Students',
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: xAxisLabel,
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+
+  // Store the chart instance
+  charts[canvasId] = chart;
+}
+
+// Export functions linked to the respective buttons for each section
+
+function exportToPDFCourseOverview() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
+
+  const element = document.getElementById("coursesOverviewSection");
+
+  // scale 2 for better resolution
+  html2canvas(element, { scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
+
+    const imgWidth = 190;  // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    doc.save("CoursesOverview.pdf");
+  });
+}
+
+function exportToPDFAttendanceSummary() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
+
+  const element = document.getElementById("attendanceSummaryContainer");
+
+  // scale 2 for better resolution
+  html2canvas(element, { scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
+
+    const imgWidth = 190;  // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    doc.save("AttendanceSummary-Active.pdf");
+  });
+}
+
+function exportToPDFPerformanceSummary() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
+
+  const element = document.getElementById("performanceSummaryContainer");
+
+  // scale sets resolution
+  html2canvas(element, { scale: 2 }).then(canvas => {
+    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to jpeg image (jpeg has way lower size than png)
+
+    const imgWidth = 190;  // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    doc.save("PerformanceSummary.pdf");
   });
 }

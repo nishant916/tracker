@@ -1,6 +1,6 @@
 package com.classroom.tracker.controller;
 
-import com.classroom.tracker.DTO.AttendanceStatsDTO;
+import com.classroom.tracker.DTO.GradingStats2DTO;
 import com.classroom.tracker.DTO.GradingStatsDTO;
 import com.classroom.tracker.service.GradingSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,18 @@ public class GradingSummaryController {
         this.gradingSummaryService = gradingSummaryService;
     }
 
-    // Endpoint to get attendance stats for active courses
+    // Endpoint to get grading stats for active courses
     @GetMapping("/{teacherId}")
-    public ResponseEntity<List<GradingStatsDTO>> getAttendanceStats(@PathVariable Long teacherId) {
-        List<GradingStatsDTO> attendanceStats = gradingSummaryService.getGradingStatsForCourses(teacherId);
-        return ResponseEntity.ok(attendanceStats);
+    public ResponseEntity<List<GradingStatsDTO>> getGradingStats1(@PathVariable Long teacherId) {
+        List<GradingStatsDTO> gradingStats = gradingSummaryService.getGradingStatsForCourses(teacherId);
+        return ResponseEntity.ok(gradingStats);
+    }
+
+    // Endpoint to get grading stats for completed courses
+    @GetMapping("/completed/{teacherId}")
+    public ResponseEntity<List<GradingStats2DTO>> getGradingStats2(@PathVariable Long teacherId) {
+        List<GradingStats2DTO> gradingStats = gradingSummaryService.getGradingStatsForCompletedCourses(teacherId);
+        return ResponseEntity.ok(gradingStats);
     }
 
 }

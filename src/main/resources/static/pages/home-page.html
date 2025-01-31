@@ -13,8 +13,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Script for Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Script for jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Script for HTML 2 Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <!-- Navigation bar dropdowns open on hover -->
     <style>
       .nav-item.dropdown:hover .dropdown-menu {
         display: block;
@@ -76,23 +82,31 @@
 
 
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
-      <div class="w-100" style="max-width: 1100px; padding: 20px;">
+      <div class="w-100" style="max-width: 1100px; padding: 30px; margin-bottom: 20px;">
         <div class="mb-3">
           <h1 id="welcomeText">Welcome User! Here’s a snapshot of your courses.</h1>
         </div>
 
-        <!-- Courses Section -->
-        <div class="container mt-5">
+        <!-- Courses Overview Section -->
+        <div class="container mt-5" style=" margin-bottom: 65px;">
           <h3 class="text-primary text-center" >Courses Overview</h3>
           <hr>
-          <div class="row">
+          <div class="text-end">
+            <button type="button" class="btn btn-outline-info btn-sm fw-semibold" style="margin-bottom: 20px;" onclick="exportToPDFCourseOverview()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+              </svg>
+              Export to PDF
+            </button>
+          <div id="coursesOverviewSection" class="row">
             <!-- Left Side: Tiles for Active and Completed Courses -->
             <div class="col-md-3">
               <!-- Tile for #Active Courses -->
               <div class="card text-center shadow-sm mb-4" style="background-color: #f8f9fa;">
                 <div class="card-body">
                   <h5 class="card-title text-black"># Active Courses</h5>
-                  <p id="activeCoursesCount" class="card-text display-4 fw-bold" style="color: rgba(54, 162, 235, 0.7);">0</p>
+                  <p id="activeCoursesCount" class="card-text display-1 fw-bold" style="color: rgba(54, 162, 235, 0.7);">0</p>
                 </div>
               </div>
 
@@ -100,14 +114,14 @@
               <div class="card text-center shadow-sm" style="background-color: #f8f9fa;">
                 <div class="card-body">
                   <h5 class="card-title text-black"># Completed Courses</h5>
-                  <p id="completedCoursesCount" class="card-text display-4 fw-bold" style="color: rgba(255, 99, 132, 0.7);">0</p>
+                  <p id="completedCoursesCount" class="card-text display-1 fw-bold" style="color: rgba(255, 99, 132, 0.7);">0</p>
                 </div>
               </div>
             </div>
 
             <!-- Right Side: Single Horizontal Bar Chart -->
             <div class="col-md-9">
-              <canvas id="studentsAcrossCoursesChart" width="800" height="300"></canvas>
+              <canvas id="studentsAcrossCoursesChart" width="800" height="375"></canvas>
             </div>
           </div>
         </div>
@@ -117,6 +131,15 @@
         <div class="container mt-5">
           <h3 class="text-primary text-center">Attendance Summary (Active Courses)</h3>
           <hr>
+          <div class="text-end">
+            <button type="button" class="btn btn-outline-info btn-sm fw-semibold" style="margin-bottom: 20px;" onclick="exportToPDFAttendanceSummary()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+              </svg>
+              Export to PDF
+            </button>
+          </div>
           <div class="row" id="attendanceSummaryContainer">
             <!-- Dynamic content will be inserted here -->
           </div>
@@ -126,17 +149,43 @@
         <div class="container mt-5">
           <h3 class="text-primary text-center">Performance Summary</h3>
           <hr>
-          <!-- Active Courses -->
-          <h3 class="text-start" style="color:rgba(54, 162, 235, 1.0)">Active Courses</h3>
-          <div class="row" id="performanceActiveCoursesSummaryContainer">
-            <!-- Dynamic content will be inserted here -->
+          <div class="text-end">
+            <button type="button" class="btn btn-outline-info btn-sm fw-semibold" style="margin-bottom: 20px;" onclick="exportToPDFPerformanceSummary()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+              </svg>
+              Export to PDF
+            </button>
+          </div>
+          <div id="performanceSummaryContainer">
+            <!-- Active Courses -->
+            <h3 class="text-center" style="color:rgba(54, 162, 235, 1.0); margin-bottom: 20px;">Active Courses</h3>
+            <div class="row" id="performanceActiveCoursesSummaryContainer">
+              <!-- Dynamic content will be inserted here -->
+            </div>
+
+            <!-- Completed Courses -->
+            <h3 class="text-center mt-3 mb-3" style="color:rgba(255, 99, 132, 0.8);">Completed Courses</h3>
+
+            <!-- Radio buttons to toggle between View Percentages and View Grades -->
+            <div class="text-center" id="radio-buttons-container" style="display: none; margin-bottom: 20px;">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="viewOption" id="viewPercentages" checked>
+                <label class="form-check-label" for="viewPercentages">View Percentages</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="viewOption" id="viewGrades">
+                <label class="form-check-label" for="viewGrades">View Grades</label>
+              </div>
+            </div>
+
+            <div class="row mb-5" id="performanceCompletedCoursesSummaryContainer">
+              <!-- Dynamic content will be inserted here -->
+            </div>
           </div>
 
-          <!-- Completed Courses -->
-          <h3 class="text-start" style="color:rgba(255, 99, 132, 0.8)">Completed Courses</h3>
-          <div class="row" id="performanceCompletedCoursesSummaryContainer">
-            <!-- Dynamic content will be inserted here -->
-          </div>
+
         </div>
 
       </div>
