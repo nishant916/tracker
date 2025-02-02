@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const courseDropdown = document.getElementById('CoursesList');
+    document.getElementById('exportBtn').disabled = true;
     courseDropdown.addEventListener('change', () => {
         const selectedCourseId = courseDropdown.value;
         if (selectedCourseId) {
@@ -156,5 +157,6 @@ function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
             console.warn(`Row not found for student ID: ${student.studentId}`);
         }
     });
+    document.getElementById('exportBtn').disabled = false;
 }
 

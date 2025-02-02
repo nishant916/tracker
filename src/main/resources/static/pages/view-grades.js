@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const courseDropdown = document.getElementById('CoursesList');
+    document.getElementById('exportBtn').disabled = true;
     courseDropdown.addEventListener('change', () => {
         const selectedCourseId = courseDropdown.value;
         if (selectedCourseId) {
@@ -197,8 +198,6 @@ function populateGrades(totalExams, studentGrades, finalGrades) {
             row.appendChild(finalGradeCell);
         }
     });
-}
+    document.getElementById('exportBtn').disabled = false;
 
-//remove student headers before course is selected for both view attendance and grade
-//link for view grade stats
-//dropdown for view grades for all courses (active & inactive)
+}

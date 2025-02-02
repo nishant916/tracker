@@ -118,3 +118,58 @@ function updateCourseList(activeCourses, inactiveCourses) {
 function toProperCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('exportBtn').addEventListener('click', function () {
+        exportTableToCSV();
+    });
+});
+
+
+function exportTableToCSV() {
+    // Try getting the table for view grades
+    let table = document.getElementById('view-grades-table');
+
+    // If view-grades-table is not found, check for view-attendance-table
+    if (!table) {
+        table = document.getElementById('view-attendance-table');
+    }
+
+    // If neither table exists, exit the function
+    if (!table) {
+        console.error('Error: No table found for exporting.');
+        return;
+    }
+
+    let csv = [];
+
+    // Get table headers (extract text without HTML tags)
+    let headers = [];
+    table.querySelectorAll('thead tr th').forEach(th => {
+        let headerText = th.cloneNode(true); // Clone node to avoid modifying DOM
+        headerText.querySelectorAll("span").forEach(span => span.remove()); // Remove span elements
+        headers.push(headerText.textContent.trim()); // Get clean text
+    });
+    csv.push(headers.join(',')); // Convert array to CSV string
+
+    // Get table rows
+    table.querySelectorAll('tbody tr').forEach(row => {
+        let rowData = [];
+        row.querySelectorAll('td').forEach(td => rowData.push(td.textContent.trim()));
+        csv.push(rowData.join(',')); // Convert array to CSV string
+    });
+
+    // Create and name a CSV file according to course name + grade or attendance
+    let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement("a");
+    const courseSelect = document.getElementById("CoursesList");
+    const selectedCourse = courseSelect.options[courseSelect.selectedIndex]?.text || "UnknownCourse";
+    const filename = `${selectedCourse.replace(/\s+/g, "_")}_${table.id.includes("grades") ? "grades" : "attendance"}.csv`;
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
