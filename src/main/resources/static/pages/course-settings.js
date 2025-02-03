@@ -37,7 +37,7 @@ function generateExamFields() {
         </div>
         <div class="exam-field-group">
           <label for="exam${i}_mm" class="form-label">Maximum Marks</label>
-          <input type="number" id="exam${i}_mm" class="form-control" min="0" step="1">
+          <input type="number" id="exam${i}_mm" class="form-control" min="0" step="1" oninput="validateGradeInput(this)">
         </div>
         <div class="exam-field-group">
           <label for="exam${i}_weightage" class="form-label">Weightage% (in decimal)</label>
@@ -60,6 +60,28 @@ function generateExamFields() {
     `;
     examFieldsContainer.insertAdjacentHTML('beforeend', examFieldHTML);
   }
+}
+
+function validateGradeInput(input) {
+    let value = input.value.trim(); // Get trimmed input value
+
+    // Remove any non-numeric characters except digits
+    value = value.replace(/[^0-9]/g, '');
+
+    // Allow empty input for backspacing
+    if (value === '') {
+        input.value = '';
+        return;
+    }
+
+    // Convert to integer and check range
+    let numValue = parseInt(value, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+        input.value = ''; // Reset if invalid
+    } else {
+        input.value = numValue; // Ensure proper number format
+    }
 }
 
 

@@ -14,34 +14,10 @@
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
-      .select-wrapper {
-      position: relative;
+      .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+        visibility: visible;
       }
-
-      .form-select {
-      width: 100%;
-      margin-bottom: 10px;
-      }
-
-      .select-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 1050;
-      }
-
-      .select-wrapper.open .select-dropdown {
-      display: block;
-      }
-
-      .select-wrapper .select-dropdown {
-      display: none;
-      }
-
     </style>
   </head>
 
@@ -60,7 +36,7 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             
             <li class="nav-item dropdown">
-              <span class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" aria-expanded="false">Attendance</span>
+              <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" aria-expanded="false">Attendance</a>
               <ul class="dropdown-menu">
                 <li><a id="takeAttendancePage" class="dropdown-item" href="#">Take Attendance</a></li>
                 <li><a id="viewAttendancePage" class="dropdown-item" href="#">View Attendance</a></li>
@@ -68,7 +44,7 @@
             </li>
             
             <li class="nav-item dropdown">
-              <span class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Performance</span>
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Performance</a>
               <ul class="dropdown-menu">
                 <li><a id="editGradesPage" class="dropdown-item" href="#">Edit Grades</a></li>
                 <li><a id="viewGradesPage" class="dropdown-item" href="#">View Grades</a></li>
@@ -84,7 +60,7 @@
           <!-- Username Dropdown -->
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
-              <span id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</span>
+              <a id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</a>
               <ul class="dropdown-menu">
                 <li><a id="logoutLink" class="dropdown-item" href="#">Logout</a></li>
               </ul>
