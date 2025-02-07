@@ -1,24 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fetchAllCourses();
-  createStudentsAcrossCoursesCharts();
-  makeAttendanceChart();
-  fetchGradingStats();
-  fetchGradingStatsCompletedCourses();
+  // Redirect to login page if not logged in
+  if (!teacherId) {
+      window.location.href = "../index.html";
+  }
+  else {
+      fetchAllCourses();
+      createStudentsAcrossCoursesCharts();
+      makeAttendanceChart();
+      fetchGradingStats();
+      fetchGradingStatsCompletedCourses();
 
-  // Event listeners for radio buttons
-  document.getElementById('viewPercentages').addEventListener('change', () => {
-    if (currentViewType !== "percentages") {
-      currentViewType = "percentages";
-      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with percentages
-    }
-  });
+      // Event listeners for radio buttons
+      document.getElementById('viewPercentages').addEventListener('change', () => {
+        if (currentViewType !== "percentages") {
+          currentViewType = "percentages";
+          fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with percentages
+        }
+      });
 
-  document.getElementById('viewGrades').addEventListener('change', () => {
-    if (currentViewType !== "grades") {
-      currentViewType = "grades";
-      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with grades
-    }
-  });
+      document.getElementById('viewGrades').addEventListener('change', () => {
+        if (currentViewType !== "grades") {
+          currentViewType = "grades";
+          fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with grades
+        }
+      });
+  }
 });
 
   function fetchAllCourses() {
@@ -31,8 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(allCourses => {
         updateCourseTiles(allCourses);
 
-        // Set welcome text
-        const username = allCourses[0].username;
+        const username = allCourses[0].username;      // get username
+        document.getElementById('username').textContent = username;     // set username in nav bar
+        // set welcome text
         const firstName = toProperCase(username.split('.')[0]);
         const welcomeText = document.getElementById('welcomeText');
         welcomeText.textContent = `Welcome ${firstName}! Here’s a snapshot of your courses.`;

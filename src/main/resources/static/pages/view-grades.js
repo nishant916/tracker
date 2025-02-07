@@ -1,12 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const courseDropdown = document.getElementById('CoursesList');
-    document.getElementById('exportBtn').disabled = true;
-    courseDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        if (selectedCourseId) {
-            fetchStudentsForCourse(selectedCourseId);
-        }
-    });
+    // Redirect to login page if not logged in
+    if (!teacherId) {
+        window.location.href = "../index.html";
+    }
+    else {
+        const courseDropdown = document.getElementById('CoursesList');
+        document.getElementById('exportBtn').disabled = true;
+        courseDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            if (selectedCourseId) {
+                fetchStudentsForCourse(selectedCourseId);
+            }
+        });
+    }
 });
 
 // Fetch student details for the selected course

@@ -1,38 +1,41 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-  fetchActiveCourses();
+  // Redirect to login page if not logged in
+  if (!teacherId) {
+      window.location.href = "../index.html";
+  }
+  else {
+      fetchActiveCourses();
 
-  const courseDropdown = document.getElementById('activeCoursesList');
-  const classDropdown = document.getElementById('classNumberList');
+      const courseDropdown = document.getElementById('activeCoursesList');
+      const classDropdown = document.getElementById('classNumberList');
 
-  // Track selected class number
-    let selectedClassNumber = null;
+      // Track selected class number
+        let selectedClassNumber = null;
 
-  courseDropdown.addEventListener('change', () => {
-    const selectedCourseId = courseDropdown.value;
-    if (selectedCourseId) {
-      fetchClassNumbers(selectedCourseId);
-    }
-  });
+      courseDropdown.addEventListener('change', () => {
+        const selectedCourseId = courseDropdown.value;
+        if (selectedCourseId) {
+          fetchClassNumbers(selectedCourseId);
+        }
+      });
 
-// added for fetching students of a particular course
-  classDropdown.addEventListener('change', () => {
-    const selectedCourseId = document.getElementById('activeCoursesList').value;
-    selectedClassNumber = classDropdown.value;
+    // added for fetching students of a particular course
+      classDropdown.addEventListener('change', () => {
+        const selectedCourseId = document.getElementById('activeCoursesList').value;
+        selectedClassNumber = classDropdown.value;
 
-    if (selectedCourseId && selectedClassNumber) {
-      fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
-    }
-  });
+        if (selectedCourseId && selectedClassNumber) {
+          fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
+        }
+      });
 
-  const saveButton = document.getElementById('saveButton');
+      const saveButton = document.getElementById('saveButton');
       if (saveButton) {
           saveButton.addEventListener('click',  () => saveAttendance(selectedClassNumber));
       }
+  }
 
 });
-
-
 
 // Override the updateActiveCourseList function to add filtering logic
 function updateActiveCourseList(courses) {
@@ -84,7 +87,6 @@ function populateClassList(totalClasses) {
     classDropdown.disabled = true;
   }
 }
-
 
 //fetch student details for the selected course
 function fetchStudentsForCourse(courseId, selectedClassNumber) {
@@ -175,9 +177,6 @@ function generateDropdownOptions(attendanceValue) {
     }
 }
 
-
-
-
 function saveAttendance(selectedClassNumber) {
     const courseId = document.getElementById('activeCoursesList').value;
     const dropdowns = document.querySelectorAll('.attendance-dropdown');
@@ -188,6 +187,7 @@ function saveAttendance(selectedClassNumber) {
         const studentId = dropdown.getAttribute('data-student-id');
         const originalValue = dropdown.getAttribute('data-original-value'); // Store original value
         let newValue = dropdown.value;
+        const alertContainer = document.getElementById('alertContainer');
 
         // Only add to attendanceData if there's a change
         if (newValue !== originalValue) {
@@ -202,7 +202,7 @@ function saveAttendance(selectedClassNumber) {
     // If no changes, return early
     if (attendanceData.length === 0) {
         console.log('No changes detected, skipping update.');
-        alert('No attendance changes to save.');
+        showAlert('No attendance changes to save.', 'danger');
         return;
     }
 
@@ -224,11 +224,11 @@ function saveAttendance(selectedClassNumber) {
     })
     .then(result => {
         console.log('Attendance saved successfully:', result.message);
-        alert(result.message);
+        showAlert(result.message, 'success');
     })
     .catch(error => {
         console.error('Error saving attendance:', error);
-        alert('Failed to save attendance. Please try again.');
+        showAlert('Server error. Please try again later.', 'warning');
     });
 }
 

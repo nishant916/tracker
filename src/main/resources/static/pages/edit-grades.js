@@ -1,33 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchActiveCourses();
+    // Redirect to login page if not logged in
+    if (!teacherId) {
+        window.location.href = "../index.html";
+    }
+    else {
+        fetchActiveCourses();
 
-    const courseDropdown = document.getElementById('activeCoursesList');
-    const examDropdown = document.getElementById('examList');
+        const courseDropdown = document.getElementById('activeCoursesList');
+        const examDropdown = document.getElementById('examList');
 
-    // Track selected class number
-    let selectedExamIndex = 0;
+        // Track selected class number
+        let selectedExamIndex = 0;
 
-    courseDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        if (selectedCourseId) {
-            fetchCourseDetails(selectedCourseId);
-        }
-    });
+        courseDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            if (selectedCourseId) {
+                fetchCourseDetails(selectedCourseId);
+            }
+        });
 
-    examDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        selectedExam = examDropdown.value;
-        selectedExamIndex = parseInt(examDropdown.value, 10);  // Convert to integer
-        if (selectedCourseId && selectedExamIndex >= 0) {
-            fetchStudentsForCourse(selectedCourseId, selectedExamIndex);
-        }
-    });
+        examDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            selectedExam = examDropdown.value;
+            selectedExamIndex = parseInt(examDropdown.value, 10);  // Convert to integer
+            if (selectedCourseId && selectedExamIndex >= 0) {
+                fetchStudentsForCourse(selectedCourseId, selectedExamIndex);
+            }
 
-    const saveButton = document.getElementById('saveButton');
-          if (saveButton) {
-              saveButton.addEventListener('click',  () => saveGrades(selectedExamIndex));
-          }
+        });
 
+        const saveButton = document.getElementById('saveButton');
+              if (saveButton) {
+                  saveButton.addEventListener('click',  () => saveGrades(selectedExamIndex));
+              }
+    }
 });
 
 // Function to fetch total no. of exams, exam names, max marks
@@ -184,6 +190,7 @@ function validateGradeInput(input, maxMarks) {
 function saveGrades(selectedExamIndex) {
     const courseId = document.getElementById('activeCoursesList').value;
     const gradeInputs = document.querySelectorAll('.grade-input');
+    const alertContainer = document.getElementById('alertContainer');
     console.log("exam idx", selectedExamIndex);
     const gradeData = [];
 
@@ -205,7 +212,7 @@ function saveGrades(selectedExamIndex) {
     // If no changes, return early
     if (gradeData.length === 0) {
         console.log('No changes detected, skipping update.');
-        alert('No grade changes to save.');
+        showAlert('No grade changes to save.', 'danger');
         return;
     }
 
@@ -227,15 +234,10 @@ function saveGrades(selectedExamIndex) {
     })
     .then(result => {
         console.log('Grades saved successfully:', result.message);
-        alert(result.message);
+        showAlert(result.message, 'success');
     })
     .catch(error => {
         console.error('Error saving grades:', error);
-        alert('Failed to save grades. Please try again.');
+        showAlert('Server error. Please try again later.', 'warning');
     });
 }
-
-
-
-
-

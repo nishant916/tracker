@@ -1,52 +1,3 @@
-// This Javascript file takes care of the links in the navigation bar
-
-const urlParams = new URLSearchParams(window.location.search);
-const teacherId = urlParams.get('teacherId');
-
-// Following statements are for Navigation bar:
-
-// When user clicks on home page button
-document.getElementById("homePage").addEventListener("click", function() {
-    const url = `home-page.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on take attendance button
-document.getElementById("takeAttendancePage").addEventListener("click", function() {
-    const url = `take-attendance.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on view attendance button
-document.getElementById("viewAttendancePage").addEventListener("click", function() {
-    const url = `view-attendance.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on edit grades button
-document.getElementById("editGradesPage").addEventListener("click", function() {
-    const url = `edit-grades.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on view grades button
-document.getElementById("viewGradesPage").addEventListener("click", function() {
-    const url = `view-grades.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on course settings button
-document.getElementById("courseSettingsPage").addEventListener("click", function() {
-    const url = `course-settings.html?teacherId=${teacherId}`;
-    window.location.href = url;
-});
-
-// When user clicks on logout button, tab closes
-document.getElementById("logoutLink").addEventListener("click", function(event) {
-    event.preventDefault();
-    window.location.href = `logout.html`;
-});
-
 document.addEventListener('DOMContentLoaded', () => {
     // Fetch active and inactive courses on page load
     fetchActiveCourses();
@@ -72,10 +23,10 @@ function fetchInactiveCourses(activeCourses) {
     fetch(url)
         .then(response => response.json())
         .then(inactiveCourses => {
-        console.log('Fetched inactive courses:', inactiveCourses);
+        console.log('Fetched completed courses:', inactiveCourses);
         updateCourseList(activeCourses, inactiveCourses)
     })
-        .catch(error => console.error('Error fetching inactive courses:', error));
+        .catch(error => console.error('Error fetching completed courses:', error));
 }
 
 function updateCourseList(activeCourses, inactiveCourses) {
@@ -100,7 +51,7 @@ function updateCourseList(activeCourses, inactiveCourses) {
     // Add Inactive Courses Header
     if (inactiveCourses.length > 0) {
         const inactiveHeader = document.createElement('optgroup');
-        inactiveHeader.label = 'Inactive Courses';
+        inactiveHeader.label = 'Completed Courses';
         courseSelect.appendChild(inactiveHeader);
 
         inactiveCourses.forEach(c => {

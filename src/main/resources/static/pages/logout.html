@@ -17,16 +17,36 @@
 
   <body>
 
-
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: 100vh; padding: 0;">
       <div class="w-100" style="max-width: 900px; padding: 20px;">
         <div class="mb-3">
-          <h1>You have been logged out !!!</h1>
+          <h1 class="text-center text-danger">You have logged out successfully.</h1>
+        </div>
+        <div class="d-flex gap-2 justify-content-center py-5">
+          <button id="redirectButton" class="btn btn-outline-secondary d-flex align-items-center" type="button" disabled>
+            <span class="spinner-border spinner-border-lg" aria-hidden="true"></span>
+            <span id="countdownText" role="status" class="ms-2"> Redirecting in 5 seconds... </span>
+          </button>
         </div>
 
       </div>
     </div>
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let countdown = 5; // Set countdown time in seconds
+
+      // Update the countdown every second
+      const countdownInterval = setInterval(() => {
+          countdown--; // Decrement countdown by 1
+          document.getElementById('countdownText').textContent = `Redirecting in ${countdown} seconds...`;
+
+          // If countdown reaches 0, clear the interval and redirect
+          if (countdown === 0) {
+              clearInterval(countdownInterval);
+              window.location.href = '../index.html'; // Redirect to home page
+          }
+      }, 1000); // Update every 1 second
+    </script>
   </body>
 </html>
