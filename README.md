@@ -1,5 +1,5 @@
 # Classroom Attendance and Performance Tracker
-A web application for teachers to efficiently manage student attendance, track academic performance, and generate reports. 
+A web application for teachers to efficiently manage student attendance, track academic performance, and generate reports. <br><br>
 
 ## Table of Contents
 1. [Features](#1-features)
@@ -12,7 +12,7 @@ A web application for teachers to efficiently manage student attendance, track a
 4. [User Guide](#user-guide)
 5. [Contributing](#contributing)
 6. [License](#license)
-
+<br><br>
 
 ## 1. Features
 ### 📚 Attendance Management
@@ -39,9 +39,10 @@ Dashboard: Interactive Tooltip with Highlighting when hovering over a column (ba
 
 **Performance Summary**: (Active Courses) Bar graphs display all exams in each active course. Highest, lowest, average & median grades are shown.   
 (Completed Courses) Bar graph shows number of students corresponding to score ranges in both percentage & German grading format.  
-<br><br>
+<br>
 **All Views can exported to CSV**  
 View Attendance & View Grades: Display table is converted to CSV file. CSV file is named according to selected course name.  
+<br>
 
 ## 2. Technologies Used  
 
