@@ -462,8 +462,8 @@ function populateGradingOfCompletedCourses(gradingStats) {
       gradeChart.style.width = "100%";    // Ensure full width
 
       // Set container overflow behavior
-      container.style.maxHeight = "100vh";
-      container.style.overflowY = "auto";
+      container.style.maxHeight = "none";
+      //container.style.overflowY = "auto";
 
       // Create or update the chart based on the current view type
       createGradingForCompletedCoursesChart(chartId, course.gradeCategories, currentViewType);
@@ -545,58 +545,39 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
   charts[canvasId] = chart;
 }
 
-// Export functions linked to the respective buttons for each section
-
-function exportToPDFCourseOverview() {
+// Export PDF function
+function exportToPDF(elementId, titleText, titleColor, pdfFileName) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
+  const pageWidth = doc.internal.pageSize.getWidth();
 
-  const element = document.getElementById("coursesOverviewSection");
-
-  // scale 2 for better resolution
-  html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
-
-    const imgWidth = 190;  // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("CoursesOverview.pdf");
-  });
-}
-
-function exportToPDFAttendanceSummary() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
-
-  const element = document.getElementById("attendanceSummaryContainer");
-
-  // scale 2 for better resolution
-  html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
-
-    const imgWidth = 190;  // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("AttendanceSummary-Active.pdf");
-  });
-}
-
-function exportToPDFPerformanceSummary() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
-
-  const element = document.getElementById("performanceSummaryContainer");
+  const element = document.getElementById(elementId);
 
   // scale sets resolution
   html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to jpeg image (jpeg has way lower size than png)
+    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to JPEG
 
     const imgWidth = 190;  // A4 width in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
 
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("PerformanceSummary.pdf");
+    doc.internal.pageSize.height = imgHeight + 55;
+
+    // Adding title of the PDF report
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(titleColor.r, titleColor.g, titleColor.b); // Use passed title color
+    doc.text(titleText, pageWidth / 2, 15, { align: "center" });
+
+    // Adding export generation date of the PDF report
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(169, 169, 169);
+    doc.text("Generated on: " + new Date().toLocaleDateString(), pageWidth / 2, 25, { align: "center" });
+
+    // Add the image to the PDF
+    doc.addImage(imgData, 'JPEG', 10, 35, imgWidth, imgHeight);
+
+    // Save the PDF with the provided file name
+    doc.save(pdfFileName + ".pdf");
   });
 }
