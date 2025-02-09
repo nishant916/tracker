@@ -15,6 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Function to check if a selected course is active
+function isCourseActive(courseId) {
+    const activeCourses = JSON.parse(localStorage.getItem('activeCourses')) || [];
+    const isActive = activeCourses.some(course => course.courseId == courseId);
+    return isActive;
+}
+
+
 // Fetch student details for the selected course
 function fetchStudentsForCourse(courseId) {
     const url = `/api/attendance/${courseId}/students`;
@@ -127,13 +135,17 @@ function addTableHeaders(courseId, totalExams, examNames, maxMarks, weightages) 
         headerRow.appendChild(classHeader);
     }
 
-
-
-    // Add a header for the Final Grade column
-    const finalGradeHeader = document.createElement('th');
-    finalGradeHeader.scope = 'col';
-    finalGradeHeader.textContent = 'Final Grade';
-    headerRow.appendChild(finalGradeHeader);
+     console.log(`isCourseActive(${courseId}) =`, isCourseActive(courseId));
+     if (!isCourseActive(courseId)) {
+        console.log(`Adding Final Grade column for course ${courseId} (Inactive Course)`);
+        // Add a header for the Final Grade column
+        const finalGradeHeader = document.createElement('th');
+        finalGradeHeader.scope = 'col';
+        finalGradeHeader.textContent = 'Final Grade';
+        headerRow.appendChild(finalGradeHeader);
+    }  else {
+              console.log(`Skipping Final Grade column for course ${courseId} (Active Course)`);
+              }
 }
 
 function fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightages) {
@@ -171,10 +183,10 @@ function calculateFinalGrade(studentGrades, courseId, totalExams, examNames, max
         });
 
         console.log('Calculated Final Grades:', finalGrades);
-        populateGrades(totalExams, studentGrades, finalGrades);
+        populateGrades(totalExams, studentGrades, finalGrades, courseId);
     }
 
-function populateGrades(totalExams, studentGrades, finalGrades) {
+function populateGrades(totalExams, studentGrades, finalGrades, courseId) {
     const tableBody = document.getElementById('studentsTableBody');
 
     // Check if tableBody exists
@@ -197,11 +209,13 @@ function populateGrades(totalExams, studentGrades, finalGrades) {
                 row.appendChild(cell);
             }
 
-            // Find the corresponding final grade for this student
-            const finalGradeObj = finalGrades.find(fg => fg.studentId === student.studentId);
-            const finalGradeCell = document.createElement('td');
-            finalGradeCell.textContent = finalGradeObj ? `${finalGradeObj.finalGrade}%` : 'N/A';
-            row.appendChild(finalGradeCell);
+             if (!isCourseActive(courseId)) {
+                // Find the corresponding final grade for this student
+                const finalGradeObj = finalGrades.find(fg => fg.studentId === student.studentId);
+                const finalGradeCell = document.createElement('td');
+                finalGradeCell.textContent = finalGradeObj ? `${finalGradeObj.finalGrade}%` : 'N/A';
+                row.appendChild(finalGradeCell);
+            }
         }
     });
     document.getElementById('exportBtn').disabled = false;

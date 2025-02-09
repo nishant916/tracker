@@ -11,6 +11,7 @@ function fetchActiveCourses() {
         .then(response => response.json())
         .then(activeCourses => {
         console.log('Fetched active courses:', activeCourses);
+        localStorage.setItem('activeCourses', JSON.stringify(activeCourses)); // Store in localStorage
         fetchInactiveCourses(activeCourses);
     })
         .catch(error => console.error('Error fetching active courses:', error));
