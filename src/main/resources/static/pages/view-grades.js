@@ -30,7 +30,7 @@ function fetchStudentsForCourse(courseId) {
     fetch(url)
         .then(response => response.json())
         .then(studentDetails => {
-        console.log('Fetched students details:', studentDetails);
+
         populateStudentTable(studentDetails, courseId);
     })
         .catch(error => console.error('Error fetching students:', error));
@@ -93,7 +93,7 @@ function fetchCourseDetails(courseId) {
         fetch(weightagesUrl).then(response => response.json())
     ])
         .then(([totalExams, examNames, maxMarks, weightages]) => {
-        console.log('Fetched course details:', { totalExams, examNames, maxMarks, weightages });
+
         addTableHeaders(courseId, totalExams, examNames, maxMarks, weightages);
         fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightages); // Fetch grades after course details
     })
@@ -135,17 +135,13 @@ function addTableHeaders(courseId, totalExams, examNames, maxMarks, weightages) 
         headerRow.appendChild(classHeader);
     }
 
-     console.log(`isCourseActive(${courseId}) =`, isCourseActive(courseId));
      if (!isCourseActive(courseId)) {
-        console.log(`Adding Final Grade column for course ${courseId} (Inactive Course)`);
         // Add a header for the Final Grade column
         const finalGradeHeader = document.createElement('th');
         finalGradeHeader.scope = 'col';
         finalGradeHeader.textContent = 'Final Grade';
         headerRow.appendChild(finalGradeHeader);
-    }  else {
-              console.log(`Skipping Final Grade column for course ${courseId} (Active Course)`);
-              }
+    }
 }
 
 function fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightages) {
@@ -153,7 +149,6 @@ function fetchStudentsGrades(courseId, totalExams, examNames, maxMarks, weightag
     fetch(url)
         .then(response => response.json())
         .then(studentGrades => {
-        console.log('Fetched students grades:', studentGrades);
         calculateFinalGrade(studentGrades,courseId, totalExams, examNames, maxMarks, weightages);
     })
         .catch(error => console.error('Error fetching student grades:', error));
@@ -182,7 +177,6 @@ function calculateFinalGrade(studentGrades, courseId, totalExams, examNames, max
             };
         });
 
-        console.log('Calculated Final Grades:', finalGrades);
         populateGrades(totalExams, studentGrades, finalGrades, courseId);
     }
 

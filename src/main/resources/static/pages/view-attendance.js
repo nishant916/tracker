@@ -22,7 +22,7 @@ function fetchStudentsForCourse(courseId) {
     fetch(url)
         .then(response => response.json())
         .then(studentDetails => {
-        console.log('Fetched students details:', studentDetails);
+
         populateStudentTable(studentDetails, courseId);
     })
         .catch(error => console.error('Error fetching students:', error));
@@ -79,7 +79,7 @@ function fetchClassNumbers(courseId) {
     fetch(url)
         .then(response => response.json())
         .then(totalClasses => {
-        console.log('Fetched total classes:', totalClasses);
+
         fetchStudentsAttendance(courseId, totalClasses);
     })
         .catch(error => console.error('Error fetching total classes:', error));
@@ -91,7 +91,7 @@ function fetchStudentsAttendance(courseId, totalClasses) {
     fetch(url)
         .then(response => response.json())
         .then(studentAttendance => {
-        console.log('Fetched students attendance:', studentAttendance);
+
         addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance);
     })
         .catch(error => console.error('Error fetching students:', error));

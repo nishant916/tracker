@@ -12,7 +12,7 @@ function fetchActiveCourses() {
   fetch(url)
     .then(response => response.json())
     .then(courses => {
-      console.log('Fetched active courses:', courses);
+
       updateActiveCourseList(courses); // Populate dropdown
     })
     .catch(error => console.error('Error fetching courses:', error));

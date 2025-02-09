@@ -276,10 +276,11 @@ function updateCourseSettings(courseId, data) {
       let alertBox = document.getElementById("successAlert");
       alertBox.classList.remove("d-none");
 
-      // Hide the alert after 5 seconds
+      // Hide the alert after 3 seconds & re-load window
       setTimeout(() => {
         alertBox.classList.add("d-none");
-      }, 5000);
+        location.reload();
+      }, 3000);
     })
     .catch(error => console.error('Error updating course settings:', error));
 }

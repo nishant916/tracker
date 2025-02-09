@@ -8,14 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const courseDropdown = document.getElementById('activeCoursesList');
       const classDropdown = document.getElementById('classNumberList');
+      const tableContainer = document.getElementById('studentsTableContainer'); // Table container reference
 
       // Track selected class number
-        let selectedClassNumber = null;
+      let selectedClassNumber = null;
+
+      // Initially hide the table until a course and class are selected
+      tableContainer.style.display = 'none';
 
       courseDropdown.addEventListener('change', () => {
         const selectedCourseId = courseDropdown.value;
         if (selectedCourseId) {
           fetchClassNumbers(selectedCourseId);
+          // Hide the table when course is changed
+          tableContainer.style.display = 'none';
+          classDropdown.value = ""; // Reset class dropdown
         }
       });
 
@@ -26,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedCourseId && selectedClassNumber) {
           fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
+        } else {
+          // Hide table if no class is selected
+          tableContainer.style.display = 'none';
         }
       });
 
@@ -62,14 +72,14 @@ function fetchClassNumbers(courseId) {
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      console.log('Fetched total classes:', data);
+
       populateClassList(data);
     })
     .catch(error => console.error('Error fetching total classes:', error));
 }
 
 function populateClassList(totalClasses) {
-  console.log('Populating class list for totalClasses:', totalClasses); // Check if the value is correct
+
   const classDropdown = document.getElementById('classNumberList');
   classDropdown.innerHTML = '<option selected disabled>Select class number</option>'; // Clear existing options
 
@@ -95,7 +105,7 @@ function fetchStudentsForCourse(courseId, selectedClassNumber) {
     fetch(url)
         .then(response => response.json())
         .then(studentDetails => {
-        console.log('Fetched students details:', studentDetails);
+
         fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber);
 
     })
@@ -108,7 +118,7 @@ function fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber) 
     fetch(url)
         .then(response => response.json())
         .then(studentAttendance => {
-        console.log('Fetched students attendance:', studentAttendance);
+
         // Call populateStudentTable with attendance data
         populateStudentTable(studentDetails, studentAttendance, selectedClassNumber);
     })

@@ -8,14 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const courseDropdown = document.getElementById('activeCoursesList');
         const examDropdown = document.getElementById('examList');
+        const tableContainer = document.getElementById('studentsTableContainer'); // Table container reference
 
         // Track selected class number
         let selectedExamIndex = 0;
+
+        // Initially hide the table until a course and exam are selected
+        tableContainer.style.display = 'none';
 
         courseDropdown.addEventListener('change', () => {
             const selectedCourseId = courseDropdown.value;
             if (selectedCourseId) {
                 fetchCourseDetails(selectedCourseId);
+                // Hide the table when course is changed
+                tableContainer.style.display = 'none';
+                examDropdown.value = ""; // Reset exam dropdown
             }
         });
 
@@ -25,8 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedExamIndex = parseInt(examDropdown.value, 10);  // Convert to integer
             if (selectedCourseId && selectedExamIndex >= 0) {
                 fetchStudentsForCourse(selectedCourseId, selectedExamIndex);
+            } else {
+                // Hide table if no exam is selected
+                tableContainer.style.display = 'none';
             }
-
         });
 
         const saveButton = document.getElementById('saveButton');
@@ -49,7 +58,7 @@ function fetchCourseDetails(courseId) {
         fetch(maxMarksUrl).then(response => response.json())
     ])
         .then(([totalExams, examNames, maxMarks]) => {
-        console.log('Fetched course details:', { totalExams, examNames, maxMarks});
+
         // Populate the exam dropdown with the correct labels
         populateExamDropdown(totalExams, examNames);
     })
@@ -98,7 +107,7 @@ function fetchStudentsGrades(courseId, studentDetails, examIndex, maxMarks) {
     fetch(url)
         .then(response => response.json())
         .then(studentGrades => {
-        console.log('Fetched students grades:', studentGrades);
+
         populateStudentTable(studentGrades, studentDetails, examIndex, maxMarks);
     })
         .catch(error => console.error('Error fetching student grades:', error));
@@ -132,11 +141,6 @@ function populateStudentTable(studentGrades, studentDetails, examIndex, maxMarks
             const studentGrade = studentGrades.find(grade => grade.studentId === student.studentId);
             // Determine correct exam column dynamically
             const examColumn = `exam${parseInt(examIndex + 1)}Grades`;
-
-            // Debugging Output
-            console.log(`Student ID: ${student.studentId}`);
-            console.log(`Found Student Grade:`, studentGrade);
-            console.log(`Exam Column: ${examColumn}`);
 
             let studentMarks = studentGrade[examColumn];
 
@@ -191,7 +195,7 @@ function saveGrades(selectedExamIndex) {
     const courseId = document.getElementById('activeCoursesList').value;
     const gradeInputs = document.querySelectorAll('.grade-input');
     const alertContainer = document.getElementById('alertContainer');
-    console.log("exam idx", selectedExamIndex);
+
     const gradeData = [];
 
     gradeInputs.forEach(input => {

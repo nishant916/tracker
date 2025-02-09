@@ -153,7 +153,7 @@ function makeAttendanceChart() {
       return response.json();
     })
     .then((data) => {
-      console.log("Attendance data received:", data);
+
 
       if (data.length === 0) {
         attendanceSummaryContainer.innerHTML = "<p>No active courses found.</p>";
@@ -224,7 +224,7 @@ function makeAttendanceChart() {
           .then((students) => {
             const studentList = document.getElementById(`studentList-${index}`);
             studentList.innerHTML = "";
-            console.log("Fetched students list: ", students);
+
 
             if (students.length === 0) {
               studentList.innerHTML = "<li class='list-group-item'>No students below minimum attendance.</li>";
@@ -266,7 +266,7 @@ function renderPieChart(canvas, present, absent, late) {
   }
 
   if (chartInstances.has(canvas)) {
-    console.log("Destroying existing chart for canvas:", canvas);
+
     chartInstances.get(canvas).destroy();
   }
 
@@ -310,7 +310,7 @@ function fetchGradingStats() {
   fetch(`/api/grading-summary/${teacherId}`)
     .then((response) => response.json())
     .then((data) => {
-      console.log('Fetched Grading stats:', data);
+
       populateGradingOfActiveCourses(data);
     })
     .catch((error) => console.error("Error fetching grading stats:", error));
@@ -415,7 +415,7 @@ function fetchGradingStatsCompletedCourses() {
   fetch(`/api/grading-summary/completed/${teacherId}`)
     .then((response) => response.json())
     .then((gradingStats) => {
-      console.log('Fetched Grading stats completed courses:', gradingStats);
+
       populateGradingOfCompletedCourses(gradingStats);
     })
     .catch((error) => console.error("Error fetching grading stats:", error));
@@ -479,7 +479,7 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
 
   // Destroy the existing chart if it exists
   if (charts[canvasId]) {
-    console.log('Destroying existing chart for canvasId:', canvasId);
+
     charts[canvasId].destroy();
   }
 
@@ -490,8 +490,6 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
 
   const xAxisLabel = viewType === "grades" ? 'Grades' : 'Percentage';
 
-  // Log the label type for debugging
-  console.log('Chart labels:', labels);
 
   // Create a new chart instance
   const chart = new Chart(ctx, {
