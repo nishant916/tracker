@@ -8,15 +8,16 @@ A web application for teachers to efficiently manage student attendance, track a
     - Performance Tracking
     - Course Management
     - Reporting
-2. [Technologies Used](#2-technologies-used)
+2. [Screenshots](#2-screenshots)
+3. [Technologies Used](#3-technologies-used)
     - Languages
     - Frameworks
     - Tools
-3. [Getting Started](#3-getting-started)
-4. [User Guide](#4-user-guide)
-5. [Contributing](#5-contributing)
-6. [License](#6-license)
-7. [Contributors](#7-contributors)
+4. [Getting Started](#4-getting-started)
+5. [User Guide](#5-user-guide)
+6. [Contributing](#6-contributing)
+7. [License](#7-license)
+8. [Contributors](#8-contributors)
 <br><br>
 
 ## 1. Features
@@ -48,8 +49,28 @@ Dashboard: Interactive Tooltip with Highlighting when hovering over a column (ba
 **All Views can exported to CSV**  
 View Attendance & View Grades: Display table is converted to CSV file. CSV file is named according to selected course name.
 <br><br>
+## 2. Screenshots
+![Login Page](screenshots/login_page.png)
 
-## 2. Technologies Used  
+![Dashboard](screenshots/dashboard.png)
+
+![Take Attendance](screenshots/take_attendance.png)
+
+![View Attendance](screenshots/view_attendance.png)
+
+![Edit Grades](screenshots/edit_grades.png)
+
+![View Grades](screenshots/view_grades.png)
+
+![Course Settings](screenshots/course_settings.png)
+
+![Logout Page](screenshots/logout_page.png)
+
+![Database Tables](screenshots/database_tables.png)
+
+<br></br>
+
+## 3. Technologies Used  
 ### 🖥️ Languages
 - **HTML5 & CSS** 🌐 – For structuring and styling web pages.
 - **JavaScript** ⚡ – For interactive client-side scripting.
@@ -71,8 +92,10 @@ View Attendance & View Grades: Display table is converted to CSV file. CSV file 
 - **Sublime Text** ✍️ – Lightweight text editor for HTML & CSS.
 - **Visual Studio Code** 🖊️ – A versatile code editor for front-end development.
 - **GitHub** 🔗 – Version control and project collaboration platform.
+- **Notepad++** 📝 - Text editor for fast and easy modifications.
 <br></br>
-## 3. Getting Started
+
+## 4. Getting Started
 ### 📌 Prerequisites
 Ensure the following is installed
 - Java 23
@@ -123,7 +146,7 @@ mvn spring-boot:run
 ```
 - The application should now be running at `http://localhost:8080` 🎉
 <br></br>
-## 4. User Guide
+## 5. User Guide
 ### 🗝️ Login
 - Teachers must log in using their username and password.
 - These credentials are provided by the admin.
@@ -165,7 +188,7 @@ mvn spring-boot:run
 - Click on "Logout".
 - Teacher will be redirected to Login Page in 5 seconds.
 <br></br>
-## 5. Contributing
+## 6. Contributing
 We welcome contributions! To get started:
 ### 🍴 Fork & Clone
 Click on the Fork button at the top-right of the repository page. Open IntelliJ IDEA. Click "Get from Version Control", enter:
@@ -181,14 +204,14 @@ Push changes (VCS > Git > Push) and submit a Pull Request on GitHub.
 ### 💡 Found a bug?
 Open an issue in the Issues tab.
 <br></br>
-## 6. License
+## 7. License
 This project was developed as part of a university programming course and is intended for educational purposes only.
 - Usage: You may review and learn from the code.
 - Restrictions: Redistribution, commercial use, or modification for external projects may require permission.
 - Ownership: The work belongs to the project contributors and the university course.
 <br></br>
-## 7. Contributors
-This project was developed as part of the **Programming II course at SRH Berlin University**.
+## 8. Contributors
+This project was developed as part of the **Programming II course in the BSc Computer Science degree at SRH Berlin University**.
 ### 🤝 Project Team:
 - Nishant Malik
 - Amrutha Manjunath
