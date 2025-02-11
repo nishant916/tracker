@@ -1,33 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchActiveCourses();
+    // Redirect to login page if not logged in
+    if (!teacherId) {
+        window.location.href = "../index.html";
+    }
+    else {
+        fetchActiveCourses();
 
-    const courseDropdown = document.getElementById('activeCoursesList');
-    const examDropdown = document.getElementById('examList');
+        const courseDropdown = document.getElementById('activeCoursesList');
+        const examDropdown = document.getElementById('examList');
+        const tableContainer = document.getElementById('studentsTableContainer'); // Table container reference
 
-    // Track selected class number
-    let selectedExamIndex = 0;
+        // Track selected class number
+        let selectedExamIndex = 0;
 
-    courseDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        if (selectedCourseId) {
-            fetchCourseDetails(selectedCourseId);
-        }
-    });
+        // Initially hide the table until a course and exam are selected
+        tableContainer.style.display = 'none';
 
-    examDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        selectedExam = examDropdown.value;
-        selectedExamIndex = parseInt(examDropdown.value, 10);  // Convert to integer
-        if (selectedCourseId && selectedExamIndex >= 0) {
-            fetchStudentsForCourse(selectedCourseId, selectedExamIndex);
-        }
-    });
+        courseDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            if (selectedCourseId) {
+                fetchCourseDetails(selectedCourseId);
+                // Hide the table when course is changed
+                tableContainer.style.display = 'none';
+                examDropdown.value = ""; // Reset exam dropdown
+            }
+        });
 
-    const saveButton = document.getElementById('saveButton');
-          if (saveButton) {
-              saveButton.addEventListener('click',  () => saveGrades(selectedExamIndex));
-          }
+        examDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            selectedExam = examDropdown.value;
+            selectedExamIndex = parseInt(examDropdown.value, 10);  // Convert to integer
+            if (selectedCourseId && selectedExamIndex >= 0) {
+                fetchStudentsForCourse(selectedCourseId, selectedExamIndex);
+            } else {
+                // Hide table if no exam is selected
+                tableContainer.style.display = 'none';
+            }
+        });
 
+        const saveButton = document.getElementById('saveButton');
+              if (saveButton) {
+                  saveButton.addEventListener('click',  () => saveGrades(selectedExamIndex));
+              }
+    }
 });
 
 // Function to fetch total no. of exams, exam names, max marks
@@ -43,7 +58,7 @@ function fetchCourseDetails(courseId) {
         fetch(maxMarksUrl).then(response => response.json())
     ])
         .then(([totalExams, examNames, maxMarks]) => {
-        console.log('Fetched course details:', { totalExams, examNames, maxMarks});
+
         // Populate the exam dropdown with the correct labels
         populateExamDropdown(totalExams, examNames);
     })
@@ -92,7 +107,7 @@ function fetchStudentsGrades(courseId, studentDetails, examIndex, maxMarks) {
     fetch(url)
         .then(response => response.json())
         .then(studentGrades => {
-        console.log('Fetched students grades:', studentGrades);
+
         populateStudentTable(studentGrades, studentDetails, examIndex, maxMarks);
     })
         .catch(error => console.error('Error fetching student grades:', error));
@@ -126,11 +141,6 @@ function populateStudentTable(studentGrades, studentDetails, examIndex, maxMarks
             const studentGrade = studentGrades.find(grade => grade.studentId === student.studentId);
             // Determine correct exam column dynamically
             const examColumn = `exam${parseInt(examIndex + 1)}Grades`;
-
-            // Debugging Output
-            console.log(`Student ID: ${student.studentId}`);
-            console.log(`Found Student Grade:`, studentGrade);
-            console.log(`Exam Column: ${examColumn}`);
 
             let studentMarks = studentGrade[examColumn];
 
@@ -184,7 +194,8 @@ function validateGradeInput(input, maxMarks) {
 function saveGrades(selectedExamIndex) {
     const courseId = document.getElementById('activeCoursesList').value;
     const gradeInputs = document.querySelectorAll('.grade-input');
-    console.log("exam idx", selectedExamIndex);
+    const alertContainer = document.getElementById('alertContainer');
+
     const gradeData = [];
 
     gradeInputs.forEach(input => {
@@ -205,7 +216,7 @@ function saveGrades(selectedExamIndex) {
     // If no changes, return early
     if (gradeData.length === 0) {
         console.log('No changes detected, skipping update.');
-        alert('No grade changes to save.');
+        showAlert('No grade changes to save.', 'danger');
         return;
     }
 
@@ -227,15 +238,10 @@ function saveGrades(selectedExamIndex) {
     })
     .then(result => {
         console.log('Grades saved successfully:', result.message);
-        alert(result.message);
+        showAlert(result.message, 'success');
     })
     .catch(error => {
         console.error('Error saving grades:', error);
-        alert('Failed to save grades. Please try again.');
+        showAlert('Server error. Please try again later.', 'warning');
     });
 }
-
-
-
-
-

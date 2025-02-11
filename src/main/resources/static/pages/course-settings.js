@@ -1,29 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // Generating exam fields on load
-  generateExamFields();
+  // Redirect to login page if not logged in
+  if (!teacherId) {
+      window.location.href = "../index.html";
+  }
+  else {
 
-  // Disable fields on load
-  disableFields();
+      // Generating exam fields on load
+      generateExamFields();
 
-  // Fetch courses on page load
-  fetchCourses();
+      // Disable fields on load
+      disableFields();
 
-  // Event listeners for radio buttons
-  document.getElementById('activeCourses').addEventListener('change', fetchCourses);
-  document.getElementById('allCourses').addEventListener('change', fetchCourses);
+      // Fetch courses on page load
+      fetchCourses();
 
-  // Event listener for course selection change
-  document.getElementById('courseSelect').addEventListener('change', handleCourseSelection);
+      // Event listeners for radio buttons
+      document.getElementById('activeCourses').addEventListener('change', fetchCourses);
+      document.getElementById('allCourses').addEventListener('change', fetchCourses);
 
-  // Event listener for course active checkbox change
-  document.getElementById('isCourseActive').addEventListener('change', toggleLabel);
-  
-  // Event listener for the submit button to save the changes
-  //document.getElementById('saveButton').addEventListener('click', saveCheck);
-  document.getElementById('saveButton').addEventListener('click', handleSubmit);
+      // Event listener for course selection change
+      document.getElementById('courseSelect').addEventListener('change', handleCourseSelection);
 
-  handleNumOfExamsChange();
+      // Event listener for course active checkbox change
+      document.getElementById('isCourseActive').addEventListener('change', toggleLabel);
+
+      // Event listener for the submit button to save the changes
+      document.getElementById('saveButton').addEventListener('click', handleSubmit);
+
+      handleNumOfExamsChange();
+  }
 });
 
 function generateExamFields() {
@@ -37,7 +42,7 @@ function generateExamFields() {
         </div>
         <div class="exam-field-group">
           <label for="exam${i}_mm" class="form-label">Maximum Marks</label>
-          <input type="number" id="exam${i}_mm" class="form-control" min="0" step="1">
+          <input type="number" id="exam${i}_mm" class="form-control" min="0" step="1" oninput="validateGradeInput(this)">
         </div>
         <div class="exam-field-group">
           <label for="exam${i}_weightage" class="form-label">Weightage% (in decimal)</label>
@@ -62,6 +67,28 @@ function generateExamFields() {
   }
 }
 
+function validateGradeInput(input) {
+    let value = input.value.trim(); // Get trimmed input value
+
+    // Remove any non-numeric characters except digits
+    value = value.replace(/[^0-9]/g, '');
+
+    // Allow empty input for backspacing
+    if (value === '') {
+        input.value = '';
+        return;
+    }
+
+    // Convert to integer and check range
+    let numValue = parseInt(value, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+        input.value = ''; // Reset if invalid
+    } else {
+        input.value = numValue; // Ensure proper number format
+    }
+}
+
 
 function fetchCourses() {
 
@@ -71,7 +98,6 @@ function fetchCourses() {
   fetch(url)
     .then(response => response.json())
     .then(courses => {
-      console.log('Fetched courses:', courses);
       updateCourseList(courses); // Populate dropdown
     })
     .catch(error => console.error('Error fetching courses:', error));
@@ -86,11 +112,7 @@ function updateCourseList(courses) {
   // Filter courses based on the selected radio button
   const filteredCourses = courses.filter(c => isActive ? c.isCourseActive : true);
 
-  // Debugging the filtered courses
-  console.log('Filtered Courses:', filteredCourses);
-
   filteredCourses.forEach(c => {
-    console.log('Course:', c); // Debugging each course object
     const option = document.createElement('option');
     option.value = c.courseId;
     option.textContent = c.course;
@@ -102,7 +124,6 @@ function updateCourseList(courses) {
 
 function handleCourseSelection() {
   const courseId = document.getElementById('courseSelect').value;
-  console.log('courseSelectValue:', courseId);
   if (courseId) {
     // Fetch data for selected course (attendance settings, grading, exams)
     fetchCourseDetails(courseId);
@@ -116,15 +137,12 @@ function fetchCourseDetails(courseId) {
     .then(response => response.json())
     .then(data => {
       // Populate fields with the fetched data
-      console.log('Fetched data:', data);
       populateFields(data);
     })
     .catch(error => console.error('Error fetching course details:', error));
 }
 
 function populateFields(data) {
-  console.log('Populating fields with data:', data);
-
   // Populate common course details
   document.getElementById('isCourseActive').checked = data.isCourseActive;
   document.getElementById('enableAttendance').checked = data.isAttendanceEnabled;
@@ -253,35 +271,16 @@ function updateCourseSettings(courseId, data) {
   })
     .then(response => response.json())
     .then(updatedData => {
-      console.log('Updated course settings:', updatedData);
+
+      // Show the success alert
+      let alertBox = document.getElementById("successAlert");
+      alertBox.classList.remove("d-none");
+
+      // Hide the alert after 3 seconds & re-load window
+      setTimeout(() => {
+        alertBox.classList.add("d-none");
+        location.reload();
+      }, 3000);
     })
     .catch(error => console.error('Error updating course settings:', error));
 }
-
-
-/*// TO BE DELETED LATER:
-function saveCheck(event) {
-  event.preventDefault(); // Prevent default form submission
-
-  const courseId = document.getElementById('courseSelect').value;
-  const data = {
-    teacherId: teacherId,
-    courseId: parseInt(courseId),
-    course: document.getElementById('courseSelect').selectedOptions[0].textContent,
-    username: document.getElementById('username').textContent,
-    totalClasses: parseInt(document.getElementById('totalClasses').value || 10,10), //convert to int
-    minAttendance: parseFloat(document.getElementById('minAttendance').value || 0.75), //convert to float
-    isCourseActive: document.getElementById('isCourseActive').checked,
-    enableAttendance: document.getElementById('enableAttendance').checked,
-    numOfExams: parseInt(document.getElementById('numOfExams').value,10) //convert to int
-  };
-
-  // Add exam data to the update object
-  for (let i = 1; i <= 10; i++) {
-    data[`exam${i}Label`] = document.getElementById(`exam${i}_label`).value || '';
-    data[`exam${i}MaxMarks`] = parseInt(document.getElementById(`exam${i}_mm`).value || 0,10); //convert to int
-    data[`exam${i}Weightage`] = parseFloat(document.getElementById(`exam${i}_weightage`).value || 0);
-  }
-
-  console.log('Data being sent to backend: ', data);
-}*/

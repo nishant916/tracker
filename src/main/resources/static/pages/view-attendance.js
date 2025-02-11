@@ -1,13 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const courseDropdown = document.getElementById('CoursesList');
-    courseDropdown.addEventListener('change', () => {
-        const selectedCourseId = courseDropdown.value;
-        if (selectedCourseId) {
-            fetchStudentsForCourse(selectedCourseId);
-        }
-    });
+    // Redirect to login page if not logged in
+    if (!teacherId) {
+        window.location.href = "../index.html";
+    }
+    else {
+        const courseDropdown = document.getElementById('CoursesList');
+        document.getElementById('exportBtn').disabled = true;
+        courseDropdown.addEventListener('change', () => {
+            const selectedCourseId = courseDropdown.value;
+            if (selectedCourseId) {
+                fetchStudentsForCourse(selectedCourseId);
+            }
+        });
+    }
 });
-
 
 //fetch student details for the selected course
 function fetchStudentsForCourse(courseId) {
@@ -16,7 +22,7 @@ function fetchStudentsForCourse(courseId) {
     fetch(url)
         .then(response => response.json())
         .then(studentDetails => {
-        console.log('Fetched students details:', studentDetails);
+
         populateStudentTable(studentDetails, courseId);
     })
         .catch(error => console.error('Error fetching students:', error));
@@ -73,7 +79,7 @@ function fetchClassNumbers(courseId) {
     fetch(url)
         .then(response => response.json())
         .then(totalClasses => {
-        console.log('Fetched total classes:', totalClasses);
+
         fetchStudentsAttendance(courseId, totalClasses);
     })
         .catch(error => console.error('Error fetching total classes:', error));
@@ -85,7 +91,7 @@ function fetchStudentsAttendance(courseId, totalClasses) {
     fetch(url)
         .then(response => response.json())
         .then(studentAttendance => {
-        console.log('Fetched students attendance:', studentAttendance);
+
         addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance);
     })
         .catch(error => console.error('Error fetching students:', error));
@@ -156,5 +162,6 @@ function addTableHeadersAndPopulateAttendance(totalClasses, studentAttendance) {
             console.warn(`Row not found for student ID: ${student.studentId}`);
         }
     });
+    document.getElementById('exportBtn').disabled = false;
 }
 

@@ -7,15 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/attendance")
-public class AttendanceController {
+public class StudentDetailsController {
 
     private final StudentDetailsService studentDetailsService;
 
-    public AttendanceController(StudentDetailsService studentDetailsService) {
+    public StudentDetailsController(StudentDetailsService studentDetailsService) {
         this.studentDetailsService = studentDetailsService;
     }
 

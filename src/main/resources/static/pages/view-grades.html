@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
+    <link rel="icon" type="image/png" href="../assets/brand/srh-logo.png">
     <title>Classroom Management - View Grades</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cheatsheet/">
@@ -86,7 +87,7 @@
           <label for="CoursesList" class="form-label">Course Name</label>
           <select class="form-select" id="CoursesList">
             <option selected disabled>select course</option>
-            <!-- Dynamic options of inactive courses will be added here by JavaScript -->
+            <!-- Dynamic options of completed courses will be added here by JavaScript -->
           </select>
         </div>
 
@@ -102,15 +103,33 @@
             <!-- Student rows will be added here dynamically -->
             </tbody>
           </table>
+          <button id="exportBtn" class="btn btn-primary">Export to CSV</button>
+
 
         </div>
         
       </div>
     </div>
+    <footer class="bg-dark text-light text-center py-3">
+      <div class="container">
+        <p class="mb-1">&copy; 2025 <strong>SRH University</strong>. All Rights Reserved.</p>
+        <p class="mb-1">Developed by <strong>Amrutha Manjunath, Nishant Malik</strong> and <strong> Pruekson Lukkanothai</strong> | Students, B.Sc. Computer Science</p>
+        <p>
+          <a href="https://github.com/nishant916/tracker" class="text-light me-3" target="_blank">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="mailto:nishant.malik@stud.srh-campus-berlin.de,amrutha.manjunath@stud.srh-campus-berlin.de,pruekson.lukkanothai@stud.srh-campus-berlin.de" class="text-light">
+            <i class="fas fa-envelope"></i> Contact Us
+          </a>
+        </p>
+      </div>
+    </footer>
+
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
     <script src="view-grades.js"></script>
-    <script src="common1.js"></script>
+    <script src="common.js"></script>
+    <script src="common-view.js"></script>
   </body>
 </html>

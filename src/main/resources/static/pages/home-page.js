@@ -1,24 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fetchAllCourses();
-  createStudentsAcrossCoursesCharts();
-  makeAttendanceChart();
-  fetchGradingStats();
-  fetchGradingStatsCompletedCourses();
+  // Redirect to login page if not logged in
+  if (!teacherId) {
+      window.location.href = "../index.html";
+  }
+  else {
+      fetchAllCourses();
+      createStudentsAcrossCoursesCharts();
+      makeAttendanceChart();
+      fetchGradingStats();
+      fetchGradingStatsCompletedCourses();
 
-  // Event listeners for radio buttons
-  document.getElementById('viewPercentages').addEventListener('change', () => {
-    if (currentViewType !== "percentages") {
-      currentViewType = "percentages";
-      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with percentages
-    }
-  });
+      // Event listeners for radio buttons
+      document.getElementById('viewPercentages').addEventListener('change', () => {
+        if (currentViewType !== "percentages") {
+          currentViewType = "percentages";
+          fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with percentages
+        }
+      });
 
-  document.getElementById('viewGrades').addEventListener('change', () => {
-    if (currentViewType !== "grades") {
-      currentViewType = "grades";
-      fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with grades
-    }
-  });
+      document.getElementById('viewGrades').addEventListener('change', () => {
+        if (currentViewType !== "grades") {
+          currentViewType = "grades";
+          fetchGradingStatsCompletedCourses();  // Re-fetch and update charts with grades
+        }
+      });
+  }
 });
 
   function fetchAllCourses() {
@@ -31,8 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(allCourses => {
         updateCourseTiles(allCourses);
 
-        // Set welcome text
-        const username = allCourses[0].username;
+        const username = allCourses[0].username;      // get username
+        document.getElementById('username').textContent = username;     // set username in nav bar
+        // set welcome text
         const firstName = toProperCase(username.split('.')[0]);
         const welcomeText = document.getElementById('welcomeText');
         welcomeText.textContent = `Welcome ${firstName}! Here’s a snapshot of your courses.`;
@@ -146,7 +153,7 @@ function makeAttendanceChart() {
       return response.json();
     })
     .then((data) => {
-      console.log("Attendance data received:", data);
+
 
       if (data.length === 0) {
         attendanceSummaryContainer.innerHTML = "<p>No active courses found.</p>";
@@ -217,7 +224,7 @@ function makeAttendanceChart() {
           .then((students) => {
             const studentList = document.getElementById(`studentList-${index}`);
             studentList.innerHTML = "";
-            console.log("Fetched students list: ", students);
+
 
             if (students.length === 0) {
               studentList.innerHTML = "<li class='list-group-item'>No students below minimum attendance.</li>";
@@ -259,7 +266,7 @@ function renderPieChart(canvas, present, absent, late) {
   }
 
   if (chartInstances.has(canvas)) {
-    console.log("Destroying existing chart for canvas:", canvas);
+
     chartInstances.get(canvas).destroy();
   }
 
@@ -303,7 +310,7 @@ function fetchGradingStats() {
   fetch(`/api/grading-summary/${teacherId}`)
     .then((response) => response.json())
     .then((data) => {
-      console.log('Fetched Grading stats:', data);
+
       populateGradingOfActiveCourses(data);
     })
     .catch((error) => console.error("Error fetching grading stats:", error));
@@ -408,7 +415,7 @@ function fetchGradingStatsCompletedCourses() {
   fetch(`/api/grading-summary/completed/${teacherId}`)
     .then((response) => response.json())
     .then((gradingStats) => {
-      console.log('Fetched Grading stats completed courses:', gradingStats);
+
       populateGradingOfCompletedCourses(gradingStats);
     })
     .catch((error) => console.error("Error fetching grading stats:", error));
@@ -455,8 +462,8 @@ function populateGradingOfCompletedCourses(gradingStats) {
       gradeChart.style.width = "100%";    // Ensure full width
 
       // Set container overflow behavior
-      container.style.maxHeight = "100vh";
-      container.style.overflowY = "auto";
+      container.style.maxHeight = "none";
+      //container.style.overflowY = "auto";
 
       // Create or update the chart based on the current view type
       createGradingForCompletedCoursesChart(chartId, course.gradeCategories, currentViewType);
@@ -472,7 +479,7 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
 
   // Destroy the existing chart if it exists
   if (charts[canvasId]) {
-    console.log('Destroying existing chart for canvasId:', canvasId);
+
     charts[canvasId].destroy();
   }
 
@@ -483,8 +490,6 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
 
   const xAxisLabel = viewType === "grades" ? 'Grades' : 'Percentage';
 
-  // Log the label type for debugging
-  console.log('Chart labels:', labels);
 
   // Create a new chart instance
   const chart = new Chart(ctx, {
@@ -538,58 +543,39 @@ function createGradingForCompletedCoursesChart(canvasId, gradeCategories, viewTy
   charts[canvasId] = chart;
 }
 
-// Export functions linked to the respective buttons for each section
-
-function exportToPDFCourseOverview() {
+// Export PDF function
+function exportToPDF(elementId, titleText, titleColor, pdfFileName) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
+  const pageWidth = doc.internal.pageSize.getWidth();
 
-  const element = document.getElementById("coursesOverviewSection");
-
-  // scale 2 for better resolution
-  html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
-
-    const imgWidth = 190;  // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("CoursesOverview.pdf");
-  });
-}
-
-function exportToPDFAttendanceSummary() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
-
-  const element = document.getElementById("attendanceSummaryContainer");
-
-  // scale 2 for better resolution
-  html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to image
-
-    const imgWidth = 190;  // A4 width in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
-
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("AttendanceSummary-Active.pdf");
-  });
-}
-
-function exportToPDFPerformanceSummary() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF('p', 'mm', 'a4'); // Portrait mode, millimeters, A4 size
-
-  const element = document.getElementById("performanceSummaryContainer");
+  const element = document.getElementById(elementId);
 
   // scale sets resolution
   html2canvas(element, { scale: 2 }).then(canvas => {
-    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to jpeg image (jpeg has way lower size than png)
+    const imgData = canvas.toDataURL("image/jpeg"); // Convert canvas to JPEG
 
     const imgWidth = 190;  // A4 width in mm
     const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
 
-    doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-    doc.save("PerformanceSummary.pdf");
+    doc.internal.pageSize.height = imgHeight + 55;
+
+    // Adding title of the PDF report
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(titleColor.r, titleColor.g, titleColor.b); // Use passed title color
+    doc.text(titleText, pageWidth / 2, 15, { align: "center" });
+
+    // Adding export generation date of the PDF report
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(169, 169, 169);
+    doc.text("Generated on: " + new Date().toLocaleDateString(), pageWidth / 2, 25, { align: "center" });
+
+    // Add the image to the PDF
+    doc.addImage(imgData, 'JPEG', 10, 35, imgWidth, imgHeight);
+
+    // Save the PDF with the provided file name
+    doc.save(pdfFileName + ".pdf");
   });
 }

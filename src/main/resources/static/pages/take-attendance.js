@@ -1,38 +1,51 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-  fetchActiveCourses();
+  // Redirect to login page if not logged in
+  if (!teacherId) {
+      window.location.href = "../index.html";
+  }
+  else {
+      fetchActiveCourses();
 
-  const courseDropdown = document.getElementById('activeCoursesList');
-  const classDropdown = document.getElementById('classNumberList');
+      const courseDropdown = document.getElementById('activeCoursesList');
+      const classDropdown = document.getElementById('classNumberList');
+      const tableContainer = document.getElementById('studentsTableContainer'); // Table container reference
 
-  // Track selected class number
-    let selectedClassNumber = null;
+      // Track selected class number
+      let selectedClassNumber = null;
 
-  courseDropdown.addEventListener('change', () => {
-    const selectedCourseId = courseDropdown.value;
-    if (selectedCourseId) {
-      fetchClassNumbers(selectedCourseId);
-    }
-  });
+      // Initially hide the table until a course and class are selected
+      tableContainer.style.display = 'none';
 
-// added for fetching students of a particular course
-  classDropdown.addEventListener('change', () => {
-    const selectedCourseId = document.getElementById('activeCoursesList').value;
-    selectedClassNumber = classDropdown.value;
+      courseDropdown.addEventListener('change', () => {
+        const selectedCourseId = courseDropdown.value;
+        if (selectedCourseId) {
+          fetchClassNumbers(selectedCourseId);
+          // Hide the table when course is changed
+          tableContainer.style.display = 'none';
+          classDropdown.value = ""; // Reset class dropdown
+        }
+      });
 
-    if (selectedCourseId && selectedClassNumber) {
-      fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
-    }
-  });
+    // added for fetching students of a particular course
+      classDropdown.addEventListener('change', () => {
+        const selectedCourseId = document.getElementById('activeCoursesList').value;
+        selectedClassNumber = classDropdown.value;
 
-  const saveButton = document.getElementById('saveButton');
+        if (selectedCourseId && selectedClassNumber) {
+          fetchStudentsForCourse(selectedCourseId, selectedClassNumber);
+        } else {
+          // Hide table if no class is selected
+          tableContainer.style.display = 'none';
+        }
+      });
+
+      const saveButton = document.getElementById('saveButton');
       if (saveButton) {
           saveButton.addEventListener('click',  () => saveAttendance(selectedClassNumber));
       }
+  }
 
 });
-
-
 
 // Override the updateActiveCourseList function to add filtering logic
 function updateActiveCourseList(courses) {
@@ -59,14 +72,14 @@ function fetchClassNumbers(courseId) {
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      console.log('Fetched total classes:', data);
+
       populateClassList(data);
     })
     .catch(error => console.error('Error fetching total classes:', error));
 }
 
 function populateClassList(totalClasses) {
-  console.log('Populating class list for totalClasses:', totalClasses); // Check if the value is correct
+
   const classDropdown = document.getElementById('classNumberList');
   classDropdown.innerHTML = '<option selected disabled>Select class number</option>'; // Clear existing options
 
@@ -85,7 +98,6 @@ function populateClassList(totalClasses) {
   }
 }
 
-
 //fetch student details for the selected course
 function fetchStudentsForCourse(courseId, selectedClassNumber) {
     const url = `/api/attendance/${courseId}/students`;
@@ -93,7 +105,7 @@ function fetchStudentsForCourse(courseId, selectedClassNumber) {
     fetch(url)
         .then(response => response.json())
         .then(studentDetails => {
-        console.log('Fetched students details:', studentDetails);
+
         fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber);
 
     })
@@ -106,7 +118,7 @@ function fetchStudentsAttendance(courseId, studentDetails, selectedClassNumber) 
     fetch(url)
         .then(response => response.json())
         .then(studentAttendance => {
-        console.log('Fetched students attendance:', studentAttendance);
+
         // Call populateStudentTable with attendance data
         populateStudentTable(studentDetails, studentAttendance, selectedClassNumber);
     })
@@ -175,9 +187,6 @@ function generateDropdownOptions(attendanceValue) {
     }
 }
 
-
-
-
 function saveAttendance(selectedClassNumber) {
     const courseId = document.getElementById('activeCoursesList').value;
     const dropdowns = document.querySelectorAll('.attendance-dropdown');
@@ -188,6 +197,7 @@ function saveAttendance(selectedClassNumber) {
         const studentId = dropdown.getAttribute('data-student-id');
         const originalValue = dropdown.getAttribute('data-original-value'); // Store original value
         let newValue = dropdown.value;
+        const alertContainer = document.getElementById('alertContainer');
 
         // Only add to attendanceData if there's a change
         if (newValue !== originalValue) {
@@ -202,7 +212,7 @@ function saveAttendance(selectedClassNumber) {
     // If no changes, return early
     if (attendanceData.length === 0) {
         console.log('No changes detected, skipping update.');
-        alert('No attendance changes to save.');
+        showAlert('No attendance changes to save.', 'danger');
         return;
     }
 
@@ -224,11 +234,11 @@ function saveAttendance(selectedClassNumber) {
     })
     .then(result => {
         console.log('Attendance saved successfully:', result.message);
-        alert(result.message);
+        showAlert(result.message, 'success');
     })
     .catch(error => {
         console.error('Error saving attendance:', error);
-        alert('Failed to save attendance. Please try again.');
+        showAlert('Server error. Please try again later.', 'warning');
     });
 }
 

@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
+    <link rel="icon" type="image/png" href="../assets/brand/srh-logo.png">
     <title>Classroom Management - Take Attendance</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cheatsheet/">
@@ -14,34 +15,10 @@
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
-      .select-wrapper {
-      position: relative;
+      .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+        visibility: visible;
       }
-
-      .form-select {
-      width: 100%;
-      margin-bottom: 10px;
-      }
-
-      .select-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 1050;
-      }
-
-      .select-wrapper.open .select-dropdown {
-      display: block;
-      }
-
-      .select-wrapper .select-dropdown {
-      display: none;
-      }
-
     </style>
   </head>
 
@@ -60,7 +37,7 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             
             <li class="nav-item dropdown">
-              <span class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" aria-expanded="false">Attendance</span>
+              <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" aria-expanded="false">Attendance</a>
               <ul class="dropdown-menu">
                 <li><a id="takeAttendancePage" class="dropdown-item" href="#">Take Attendance</a></li>
                 <li><a id="viewAttendancePage" class="dropdown-item" href="#">View Attendance</a></li>
@@ -68,7 +45,7 @@
             </li>
             
             <li class="nav-item dropdown">
-              <span class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Performance</span>
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Performance</a>
               <ul class="dropdown-menu">
                 <li><a id="editGradesPage" class="dropdown-item" href="#">Edit Grades</a></li>
                 <li><a id="viewGradesPage" class="dropdown-item" href="#">View Grades</a></li>
@@ -84,7 +61,7 @@
           <!-- Username Dropdown -->
           <ul class="navbar-nav ms-auto">
             <li class="nav-item dropdown">
-              <span id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</span>
+              <a id="username" class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Username</a>
               <ul class="dropdown-menu">
                 <li><a id="logoutLink" class="dropdown-item" href="#">Logout</a></li>
               </ul>
@@ -138,14 +115,33 @@
           <!-- Save Button -->
           <button id="saveButton" type="button" class="btn btn-primary mt-3">Save Changes</button>
         </div>
+        <!-- Alert Placeholder -->
+        <div id="alertContainer" class="w-100 mt-3"></div>
 
       </div>
     </div>
+
+    <footer class="bg-dark text-light text-center py-3">
+      <div class="container">
+        <p class="mb-1">&copy; 2025 <strong>SRH University</strong>. All Rights Reserved.</p>
+        <p class="mb-1">Developed by <strong>Amrutha Manjunath, Nishant Malik</strong> and <strong> Pruekson Lukkanothai</strong> | Students, B.Sc. Computer Science</p>
+        <p>
+          <a href="https://github.com/nishant916/tracker" class="text-light me-3" target="_blank">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="mailto:nishant.malik@stud.srh-campus-berlin.de,amrutha.manjunath@stud.srh-campus-berlin.de,pruekson.lukkanothai@stud.srh-campus-berlin.de" class="text-light">
+            <i class="fas fa-envelope"></i> Contact Us
+          </a>
+        </p>
+      </div>
+    </footer>
+
 
     <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     <script src="cheatsheet.js"></script>
 
     <script src="take-attendance.js"></script>
+    <script src="common-edit.js"></script>
     <script src="common.js"></script>
   </body>
 </html>
